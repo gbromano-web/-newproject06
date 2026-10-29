@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Zero Trust on AWS: Replacing Your VPN with Identity-Aware Access | TechStack Lab</title>
+  <title>Zero Trust on AWS: Replacing Your VPN with Identity-Aware Access — TechStack Lab</title>
   <meta name="description" content="A phased plan to replace a corporate VPN with identity-aware access on AWS using Verified Access, your existing identity provider, and device posture signals — with policy examples and a migration checklist.">
   <link rel="canonical" href="https://techstacklab.com/cybersecurity/zero-trust-aws-replace-vpn/">
   <meta name="theme-color" content="#2456e8">
@@ -25,6 +25,10 @@
   <script>(function(){try{var t=localStorage.getItem('tsl-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <meta name="google-adsense-account" content="ca-pub-XXXXXXXXXXXXXXXX">
   <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
+  <link rel="preload" href="/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/ibm-plex-sans-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/source-serif-4-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="alternate" type="application/rss+xml" title="TechStack Lab — new and updated guides" href="/feed.xml">
   <link rel="stylesheet" href="/styles.css">
 
   <!-- Schema: TechArticle + Person + Publisher + BreadcrumbList -->
@@ -117,15 +121,15 @@
     <div class="container header-inner">
       <a class="brand" href="/index.html" aria-label="TechStack Lab home">
         <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="7" fill="var(--accent)"/><path d="M9 11h14M9 16h10M9 21h6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
-        <span class="brand-name">TechStack<span>Lab</span></span>
+        <span class="brand-name">TechStack <span>Lab</span></span>
       </a>
       <nav class="primary-nav" id="primaryNav" aria-label="Primary">
         <ul>
-          <li><a href="/index.html?cat=cloud">Cloud Architecture</a></li>
+          <li><a href="/index.html?cat=cloud">Cloud architecture</a></li>
           <li><a href="/index.html?cat=security" aria-current="page">Cybersecurity</a></li>
-          <li><a href="/index.html?cat=saas">SaaS Tools</a></li>
+          <li><a href="/index.html?cat=saas">SaaS tools</a></li>
           <li><a href="/index.html?cat=devops">DevOps</a></li>
-          <li><a href="/index.html?cat=ai">AI Workflows</a></li>
+          <li><a href="/index.html?cat=ai">AI workflows</a></li>
         </ul>
       </nav>
       <div class="header-actions">
@@ -159,18 +163,34 @@
           </nav>
 
           <header class="article-header">
-            <a class="cat cat--security" href="/index.html?cat=security">Cybersecurity · Guide</a>
-            <h1 class="article-title" id="article-title">Zero Trust on AWS: Replacing Your VPN with Identity-Aware Access</h1>
+            <a class="cat cat--security" href="/index.html?cat=security">Cybersecurity guide</a>
+            <h1 class="article-title" id="article-title">Zero Trust on AWS: replacing your VPN with identity-aware access</h1>
             <p class="article-dek">A phased migration plan using AWS Verified Access, the identity provider you already run, and device posture signals — so you can retire network-level trust one application at a time instead of in a single risky cutover.</p>
             <div class="article-meta">
               <!-- REPLACE: author details must belong to a real contributor -->
               <span class="avatar" aria-hidden="true">PR</span>
               <div class="byline">
                 <span>By <strong><a href="/about.html#team">Priya Raman</a></strong>, Senior Security Editor</span>
-                <span>Published <time datetime="2026-10-27">Oct 27, 2026</time> · Updated <time datetime="2026-10-29">Oct 29, 2026</time> · <span id="readTime">6 min read</span></span>
+                <span>Published <time datetime="2026-10-27">Oct 27, 2026</time>, <span id="readTime">6 min read</span></span>
               </div>
             </div>
           </header>
+
+          <!-- Living guide: version + review status + changelog. Update on every substantive revision. -->
+          <section class="living-guide" aria-label="Guide status">
+            <div class="living-guide-head">
+              <span class="badge badge--updated">Updated Oct 29</span>
+              <p><strong>Living guide, version 1.2.</strong> Reviewed against current AWS documentation on Oct 29, 2026.</p>
+            </div>
+            <details>
+              <summary>What changed in this guide</summary>
+              <ol>
+                <li><time datetime="2026-10-29">Oct 29, 2026</time><span>Added the log-only rollout pattern for device posture checks. Clarified Verified Access logging destinations.</span></li>
+                <li><time datetime="2026-10-28">Oct 28, 2026</time><span>Expanded the break-glass access section.</span></li>
+                <li><time datetime="2026-10-27">Oct 27, 2026</time><span>First published.</span></li>
+              </ol>
+            </details>
+          </section>
 
           <details class="toc-mobile">
             <summary>On this page</summary>
@@ -332,8 +352,20 @@ when {
               <li><a href="https://www.cisa.gov/zero-trust-maturity-model" rel="noopener" target="_blank">CISA Zero Trust Maturity Model</a></li>
             </ul>
 
-            <p class="updated-note"><strong>Editor's note:</strong> Updated Oct 29, 2026 to clarify logging destinations and the log-only rollout pattern. Spot an error? <a href="/contact.html?topic=correction">Request a correction</a> — see our <a href="/about.html#corrections">corrections policy</a>.</p>
+            <p class="updated-note">Spot an error? <a href="/contact.html?topic=correction">Request a correction</a>. Our <a href="/about.html#corrections">corrections policy</a> explains how we handle them.</p>
           </div>
+
+          <!-- Follow prompt: the return-visit hook at the moment of highest intent -->
+          <aside class="follow-cta" aria-labelledby="follow-heading">
+            <div>
+              <h2 id="follow-heading">Get notified when this guide changes</h2>
+              <p>AWS ships changes to Verified Access often. We log every revision and send them in The Weekly Stack.</p>
+            </div>
+            <div class="follow-cta-actions">
+              <a class="btn" href="/index.html#newsletter">Subscribe</a>
+              <a class="btn btn--ghost" href="/feed.xml">RSS feed</a>
+            </div>
+          </aside>
 
           <!-- ===================== AUTHOR BIO ===================== -->
           <!-- REPLACE: use a real contributor's name, photo, credentials and profile links -->
@@ -365,7 +397,7 @@ when {
               <article class="card">
                 <div class="card-art art art--saas"><span class="art-label">Procurement</span></div>
                 <div class="card-body">
-                  <a class="cat cat--saas" href="/index.html?cat=saas">SaaS Tools</a>
+                  <a class="cat cat--saas" href="/index.html?cat=saas">SaaS tools</a>
                   <h3 class="card-title"><a href="/article-template.html">SSO Tax, SCIM, and Audit Logs: The SaaS Procurement Checklist</a></h3>
                   <div class="byline"><span><strong>Priya Raman</strong></span><span class="dot">9 min</span></div>
                 </div>
@@ -373,7 +405,7 @@ when {
               <article class="card">
                 <div class="card-art art art--cloud"><span class="art-label">Multi-cloud</span></div>
                 <div class="card-body">
-                  <a class="cat cat--cloud" href="/index.html?cat=cloud">Cloud Architecture</a>
+                  <a class="cat cat--cloud" href="/index.html?cat=cloud">Cloud architecture</a>
                   <h3 class="card-title"><a href="/article-template.html">The Real Cost of Multi-Cloud in 2026</a></h3>
                   <div class="byline"><span><strong>Daniel Okafor</strong></span><span class="dot">14 min</span></div>
                 </div>
@@ -415,28 +447,29 @@ when {
       <div>
         <a class="brand" href="/index.html" aria-label="TechStack Lab home">
           <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="7" fill="var(--accent)"/><path d="M9 11h14M9 16h10M9 21h6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
-          <span class="brand-name">TechStack<span>Lab</span></span>
+          <span class="brand-name">TechStack <span>Lab</span></span>
         </a>
         <p>Independent, field-tested guidance on enterprise cloud, security, DevOps, SaaS and AI workflows. Advertising never influences editorial coverage.</p>
       </div>
       <nav aria-label="Categories">
         <h2>Coverage</h2>
         <ul>
-          <li><a href="/index.html?cat=cloud">Cloud Architecture</a></li>
+          <li><a href="/index.html?cat=cloud">Cloud architecture</a></li>
           <li><a href="/index.html?cat=security">Cybersecurity</a></li>
-          <li><a href="/index.html?cat=saas">SaaS Tools</a></li>
+          <li><a href="/index.html?cat=saas">SaaS tools</a></li>
           <li><a href="/index.html?cat=devops">DevOps</a></li>
-          <li><a href="/index.html?cat=ai">AI Workflows</a></li>
+          <li><a href="/index.html?cat=ai">AI workflows</a></li>
         </ul>
       </nav>
       <nav aria-label="Company">
         <h2>Company</h2>
         <ul>
-          <li><a href="/about.html">About Us</a></li>
-          <li><a href="/about.html#editorial">Editorial Guidelines</a></li>
+          <li><a href="/about.html">About us</a></li>
+          <li><a href="/about.html#editorial">Editorial guidelines</a></li>
           <li><a href="/contact.html">Contact</a></li>
-          <li><a href="/privacy.html">Privacy Policy</a></li>
-          <li><a href="/terms.html">Terms &amp; Disclaimer</a></li>
+          <li><a href="/feed.xml">RSS feed</a></li>
+          <li><a href="/privacy.html">Privacy policy</a></li>
+          <li><a href="/terms.html">Terms and disclaimer</a></li>
         </ul>
       </nav>
     </div>

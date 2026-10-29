@@ -11,19 +11,76 @@
 
   /* ---------- Search index (replace with a generated JSON file as the site grows) ---------- */
   var ARTICLES = [
-    { t: 'The Real Cost of Multi-Cloud in 2026: Egress, Identity Sprawl, and the Ops Tax', c: 'Cloud Architecture', k: 'multi-cloud egress finops cost aws azure gcp', u: '/article-template.html' },
-    { t: 'Zero Trust on AWS: Replacing Your VPN with Identity-Aware Access', c: 'Cybersecurity', k: 'zero trust verified access vpn identity cedar device posture', u: '/article-template.html' },
-    { t: 'Platform Engineering vs. DevOps: What Internal Developer Platforms Actually Change', c: 'DevOps', k: 'platform engineering idp golden path backstage portal', u: '/article-template.html' },
-    { t: 'Kubernetes Cost Allocation: Building a Showback Model Finance Will Trust', c: 'Cloud Architecture', k: 'kubernetes k8s finops showback chargeback cost', u: '/article-template.html' },
-    { t: 'Evaluating RAG Pipelines for Internal Knowledge Bases: A Practical Scorecard', c: 'AI Workflows', k: 'rag llm retrieval evaluation groundedness ai', u: '/article-template.html' },
-    { t: 'SSO Tax, SCIM, and Audit Logs: The SaaS Procurement Checklist for Security Teams', c: 'SaaS Tools', k: 'saas sso scim audit logs procurement identity', u: '/article-template.html' },
-    { t: 'Passkeys in the Enterprise: Rollout Lessons for Workforce Identity', c: 'Cybersecurity', k: 'passkeys fido2 webauthn mfa identity', u: '/article-template.html' },
-    { t: 'Terraform State at Scale: Remote Backends, Locking, and Drift Detection', c: 'DevOps', k: 'terraform iac state drift opentofu', u: '/article-template.html' },
-    { t: 'Azure Landing Zones Explained: Management Groups, Policy, and Subscription Vending', c: 'Cloud Architecture', k: 'azure landing zone management groups policy governance', u: '/article-template.html' },
-    { t: 'Agentic Workflows in ITSM: Where Automation Helps and Where It Needs a Human', c: 'AI Workflows', k: 'agents itsm automation servicenow ai ticket triage', u: '/article-template.html' }
+    { t: 'The real cost of multi-cloud in 2026: egress, identity sprawl, and the ops tax', c: 'Cloud architecture', k: 'multi-cloud egress finops cost aws azure gcp', u: '/article-template.html' },
+    { t: 'Zero Trust on AWS: replacing your VPN with identity-aware access', c: 'Cybersecurity', k: 'zero trust verified access vpn identity cedar device posture', u: '/article-template.html' },
+    { t: 'Platform engineering vs. DevOps: what internal developer platforms actually change', c: 'DevOps', k: 'platform engineering idp golden path backstage portal', u: '/article-template.html' },
+    { t: 'Kubernetes cost allocation: building a showback model finance will trust', c: 'Cloud architecture', k: 'kubernetes k8s finops showback chargeback cost', u: '/article-template.html' },
+    { t: 'Evaluating RAG pipelines for internal knowledge bases: a practical scorecard', c: 'AI workflows', k: 'rag llm retrieval evaluation groundedness ai', u: '/article-template.html' },
+    { t: 'SSO tax, SCIM, and audit logs: the SaaS procurement checklist for security teams', c: 'SaaS tools', k: 'saas sso scim audit logs procurement identity', u: '/article-template.html' },
+    { t: 'Passkeys in the enterprise: rollout lessons for workforce identity', c: 'Cybersecurity', k: 'passkeys fido2 webauthn mfa identity', u: '/article-template.html' },
+    { t: 'Terraform state at scale: remote backends, locking, and drift detection', c: 'DevOps', k: 'terraform iac state drift opentofu', u: '/article-template.html' },
+    { t: 'Azure landing zones explained: management groups, policy, and subscription vending', c: 'Cloud architecture', k: 'azure landing zone management groups policy governance', u: '/article-template.html' },
+    { t: 'Agentic workflows in ITSM: where automation helps and where it needs a human', c: 'AI workflows', k: 'agents itsm automation servicenow ai ticket triage', u: '/article-template.html' }
   ];
 
-  var CATS = { cloud: 'Cloud Architecture', security: 'Cybersecurity', saas: 'SaaS Tools', devops: 'DevOps', ai: 'AI Workflows' };
+  var CATS = { cloud: 'Cloud architecture', security: 'Cybersecurity', saas: 'SaaS tools', devops: 'DevOps', ai: 'AI workflows' };
+
+  /* ---------- Return visits: "since your last visit" ----------
+     Stores one timestamp in this browser only (never sent anywhere) so the homepage can
+     highlight what changed since the reader was last here. The previous-visit value is
+     frozen for the browser session, so badges don't vanish as the reader navigates. */
+  var DAY = 864e5;
+  var NOW = Date.now();
+  var lastVisit = (function () {
+    try {
+      var frozen = sessionStorage.getItem('tsl-prev-visit');
+      if (frozen !== null) return frozen ? Number(frozen) : null;
+      var prev = Number(localStorage.getItem('tsl-last-visit'));
+      // ignore missing, future or very old values (> 1 year)
+      if (!(prev > 0) || prev > NOW || NOW - prev > 365 * DAY) prev = null;
+      sessionStorage.setItem('tsl-prev-visit', prev ? String(prev) : '');
+      localStorage.setItem('tsl-last-visit', String(NOW));
+      return prev;
+    } catch (e) { return null; }
+  })();
+  function dayStart(iso) { var d = new Date(iso + 'T00:00:00'); return isNaN(d) ? null : d.getTime(); }
+  function fmtDay(ts) { return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); }
+  // A dated change counts as unseen if it happened on or after the day of the last visit
+  function isAfterLastVisit(iso) { var t = dayStart(iso); return lastVisit && t !== null && t + DAY > lastVisit; }
+
+  // Card badges: New / Updated
+  $$('.card[data-published]').forEach(function (card) {
+    var slot = $('.card-badges', card);
+    if (!slot) return;
+    var pub = card.getAttribute('data-published'), upd = card.getAttribute('data-updated');
+    var kind = null;
+    if (lastVisit) {
+      if (isAfterLastVisit(pub)) kind = 'new';
+      else if (upd && isAfterLastVisit(upd)) kind = 'updated';
+    } else {
+      if (NOW - dayStart(pub) < 4 * DAY) kind = 'new';
+      else if (upd && NOW - dayStart(upd) < 7 * DAY) kind = 'updated';
+    }
+    if (kind === 'new') slot.innerHTML = '<span class="badge badge--new">New</span>';
+    if (kind === 'updated') slot.innerHTML = '<span class="badge badge--updated">Updated ' + fmtDay(dayStart(upd)) + '</span>';
+  });
+
+  // Changelog: mark unread entries and personalise the heading
+  var changeHeading = $('[data-changelog-heading]');
+  if (changeHeading && lastVisit) {
+    var unread = 0;
+    $$('.change[data-date]').forEach(function (li) {
+      if (isAfterLastVisit(li.getAttribute('data-date'))) {
+        li.classList.add('is-unread'); unread++;
+        var vh = document.createElement('span'); vh.className = 'sr-only'; vh.textContent = ' (unread)';
+        li.querySelector('.change-head a').appendChild(vh);
+      }
+    });
+    changeHeading.textContent = unread === 0 ? 'You’re up to date'
+      : unread === 1 ? '1 change since your last visit' : unread + ' changes since your last visit';
+    var since = $('[data-changelog-since]');
+    if (since) { since.textContent = 'Your last visit: ' + fmtDay(lastVisit) + '. Unread changes have a filled marker on the timeline.'; since.hidden = false; }
+  }
 
   /* ---------- Theme ---------- */
   function currentTheme() {
@@ -123,7 +180,7 @@
     if (cat && CATS[cat]) {
       shown = 0;
       cards.forEach(function (c) { var m = c.getAttribute('data-cat') === cat; c.hidden = !m; if (m) shown++; });
-      if (note) note.textContent = 'Showing: ' + CATS[cat] + ' · ';
+      if (note) note.textContent = 'Showing ' + CATS[cat] + '. ';
       if (note) note.insertAdjacentHTML('beforeend', '<a href="/index.html">Clear</a>');
       $$('[data-cat-link="' + cat + '"]').forEach(function (a) { a.classList.add('is-active'); a.setAttribute('aria-current', 'page'); });
     } else if (q) {
@@ -135,7 +192,7 @@
         c.hidden = !m; if (m) shown++;
       });
       if (input) input.value = q;
-      if (note) { note.textContent = shown + ' result' + (shown === 1 ? '' : 's') + ' for “' + q + '” · '; note.insertAdjacentHTML('beforeend', '<a href="/index.html">Clear</a>'); }
+      if (note) { note.textContent = shown + ' result' + (shown === 1 ? '' : 's') + ' for “' + q + '”. '; note.insertAdjacentHTML('beforeend', '<a href="/index.html">Clear</a>'); }
     }
     var empty = $('#gridEmpty');
     if (empty) empty.hidden = shown !== 0;

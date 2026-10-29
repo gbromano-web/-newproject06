@@ -27,6 +27,9 @@
   <meta name="google-adsense-account" content="ca-pub-XXXXXXXXXXXXXXXX">
 
   <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
+  <link rel="preload" href="/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/ibm-plex-sans-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="alternate" type="application/rss+xml" title="TechStack Lab — new and updated guides" href="/feed.xml">
   <link rel="stylesheet" href="/styles.css">
 
   <!-- Structured data: Publisher + WebSite (with sitelinks search box) -->
@@ -79,16 +82,16 @@
     <div class="container header-inner">
       <a class="brand" href="/index.html" aria-label="TechStack Lab home">
         <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="7" fill="var(--accent)"/><path d="M9 11h14M9 16h10M9 21h6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
-        <span class="brand-name">TechStack<span>Lab</span></span>
+        <span class="brand-name">TechStack <span>Lab</span></span>
       </a>
 
       <nav class="primary-nav" id="primaryNav" aria-label="Primary">
         <ul>
-          <li><a href="/index.html?cat=cloud" data-cat-link="cloud">Cloud Architecture</a></li>
+          <li><a href="/index.html?cat=cloud" data-cat-link="cloud">Cloud architecture</a></li>
           <li><a href="/index.html?cat=security" data-cat-link="security">Cybersecurity</a></li>
-          <li><a href="/index.html?cat=saas" data-cat-link="saas">SaaS Tools</a></li>
+          <li><a href="/index.html?cat=saas" data-cat-link="saas">SaaS tools</a></li>
           <li><a href="/index.html?cat=devops" data-cat-link="devops">DevOps</a></li>
-          <li><a href="/index.html?cat=ai" data-cat-link="ai">AI Workflows</a></li>
+          <li><a href="/index.html?cat=ai" data-cat-link="ai">AI workflows</a></li>
         </ul>
       </nav>
 
@@ -116,37 +119,90 @@
 
       <!-- ===================== HERO: FEATURED STORY ===================== -->
       <article class="hero" aria-labelledby="hero-title">
-        <div class="hero-art art art--cloud" role="img" aria-label="Abstract illustration of interconnected cloud regions">
-          <svg viewBox="0 0 600 340" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-            <g fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.5">
-              <path d="M110 230 C 200 120, 300 120, 300 170 S 420 260, 500 120" stroke-dasharray="6 6"/>
-              <path d="M110 230 L 300 170 L 500 120"/>
+        <div class="hero-body">
+          <a class="cat cat--cloud" href="/index.html?cat=cloud">Cloud architecture analysis</a>
+          <h1 class="hero-title" id="hero-title">
+            <a href="/article-template.html">The real cost of multi-cloud in 2026: egress, identity sprawl, and the ops tax nobody budgets for</a>
+          </h1>
+          <p class="hero-dek">Multi-cloud is sold as leverage against lock-in. The bill arrives as data transfer fees, duplicated security tooling, and the headcount it takes to run three control planes. Here's how to model the true cost before you commit.</p>
+          <div class="byline">
+            <span>By <strong>Daniel Okafor</strong></span>
+            <span><time datetime="2026-10-28">Oct 28, 2026</time></span>
+            <span>14 min read</span>
+          </div>
+        </div>
+        <div class="hero-art art art--cloud" role="img" aria-label="Diagram of data flowing between AWS, Azure and Google Cloud regions">
+          <svg viewBox="0 0 480 360" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <g fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.5">
+              <path d="M110 260 C 170 170, 220 150, 240 180 S 330 230, 370 110" stroke-dasharray="5 6"/>
+              <path d="M110 260 L 240 180 L 370 110"/>
             </g>
-            <g fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.8)" stroke-width="1.5">
-              <rect x="60" y="200" width="100" height="60" rx="10"/>
-              <rect x="250" y="140" width="100" height="60" rx="10"/>
-              <rect x="450" y="90" width="100" height="60" rx="10"/>
+            <g fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.85)" stroke-width="1.5">
+              <rect x="50" y="232" width="120" height="56" rx="8"/>
+              <rect x="180" y="152" width="120" height="56" rx="8"/>
+              <rect x="310" y="82" width="120" height="56" rx="8"/>
             </g>
-            <g fill="#fff" font-family="ui-monospace, monospace" font-size="13" text-anchor="middle">
-              <text x="110" y="235">AWS</text>
-              <text x="300" y="175">Azure</text>
-              <text x="500" y="125">GCP</text>
+            <g fill="#fff" font-family="IBM Plex Sans, system-ui, sans-serif" font-size="15" font-weight="600" text-anchor="middle">
+              <text x="110" y="265">AWS</text>
+              <text x="240" y="185">Azure</text>
+              <text x="370" y="115">Google Cloud</text>
             </g>
           </svg>
         </div>
-        <div class="hero-body">
-          <a class="cat cat--cloud" href="/index.html?cat=cloud">Cloud Architecture · Analysis</a>
-          <h1 class="hero-title" id="hero-title">
-            <a href="/article-template.html">The Real Cost of Multi-Cloud in 2026: Egress, Identity Sprawl, and the Ops Tax Nobody Budgets For</a>
-          </h1>
-          <p class="hero-dek">Multi-cloud is often sold as leverage against lock-in. In practice, the bill shows up in data transfer fees, duplicated security tooling, and the headcount needed to run three control planes. Here's how to model the true cost before you commit.</p>
-          <div class="byline">
-            <span>By <strong>Daniel Okafor</strong></span>
-            <span class="dot"><time datetime="2026-10-28">Oct 28, 2026</time></span>
-            <span class="dot">14 min read</span>
+      </article>
+
+      <!-- ===================== CHANGELOG: what changed since the last visit ===================== -->
+      <section class="changelog" aria-labelledby="changelog-heading" id="changelog">
+        <div class="changelog-intro">
+          <h2 id="changelog-heading" data-changelog-heading>What changed this week</h2>
+          <p>Every guide on TechStack Lab is maintained. When vendors change pricing, features or defaults, we revise the guide and log it here.</p>
+          <p class="changelog-since" data-changelog-since hidden></p>
+          <div class="changelog-actions">
+            <a class="btn" href="#newsletter">Get changes by email</a>
+            <a class="btn btn--ghost" href="/feed.xml">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 11a9 9 0 0 1 9 9M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1.5" fill="currentColor"/></svg>
+              RSS feed
+            </a>
           </div>
         </div>
-      </article>
+        <ol class="changelog-list">
+          <li class="change" data-kind="updated" data-date="2026-10-29">
+            <time datetime="2026-10-29">Oct 29</time>
+            <div class="change-body">
+              <div class="change-head"><span class="badge badge--updated">Updated</span><a href="/article-template.html">Zero Trust on AWS: replacing your VPN with identity-aware access</a></div>
+              <p class="change-note">Added a log-only rollout pattern for device posture checks and clarified Verified Access logging destinations.</p>
+            </div>
+          </li>
+          <li class="change" data-kind="new" data-date="2026-10-28">
+            <time datetime="2026-10-28">Oct 28</time>
+            <div class="change-body">
+              <div class="change-head"><span class="badge badge--new">New</span><a href="/article-template.html">The real cost of multi-cloud in 2026</a></div>
+              <p class="change-note">A cost model for egress, duplicated security tooling, and the people needed to run three control planes.</p>
+            </div>
+          </li>
+          <li class="change" data-kind="updated" data-date="2026-10-28">
+            <time datetime="2026-10-28">Oct 28</time>
+            <div class="change-body">
+              <div class="change-head"><span class="badge badge--updated">Updated</span><a href="/article-template.html">Kubernetes cost allocation: a showback model finance will trust</a></div>
+              <p class="change-note">The showback worksheet now separates idle node capacity from shared platform services.</p>
+            </div>
+          </li>
+          <li class="change" data-kind="updated" data-date="2026-10-27">
+            <time datetime="2026-10-27">Oct 27</time>
+            <div class="change-body">
+              <div class="change-head"><span class="badge badge--updated">Updated</span><a href="/article-template.html">SSO tax, SCIM, and audit logs: the SaaS procurement checklist</a></div>
+              <p class="change-note">New questions on audit-log retention periods and export formats.</p>
+            </div>
+          </li>
+          <li class="change" data-kind="new" data-date="2026-10-26">
+            <time datetime="2026-10-26">Oct 26</time>
+            <div class="change-body">
+              <div class="change-head"><span class="badge badge--new">New</span><a href="/article-template.html">Platform engineering vs. DevOps: what internal developer platforms change</a></div>
+              <p class="change-note">How a platform team changes ownership boundaries, on-call, and the paved road for new services.</p>
+            </div>
+          </li>
+        </ol>
+      </section>
 
       <!-- AdSense Slot: Header (responsive horizontal · reserved 100px mobile / 90px desktop) -->
       <div class="ad-wrap">
@@ -155,41 +211,51 @@
       </div>
 
       <div class="layout">
-        <!-- ===================== NEWS & ANALYSIS GRID ===================== -->
+        <!-- ===================== LATEST GUIDES GRID ===================== -->
         <section aria-labelledby="latest-heading">
           <div class="section-head">
-            <h2 id="latest-heading">Latest Guides &amp; Analysis</h2>
+            <h2 id="latest-heading">Latest guides and analysis</h2>
             <span class="filter-note" id="filterNote" aria-live="polite"></span>
           </div>
 
           <div class="grid" id="articleGrid">
-            <article class="card" data-cat="security">
-              <div class="card-art art art--security"><span class="art-label">Zero Trust · AWS</span></div>
+            <article class="card" data-cat="security" data-published="2026-10-27" data-updated="2026-10-29">
+              <div class="card-art art art--security"><div class="card-badges"></div><span class="art-label">Zero trust on AWS</span></div>
               <div class="card-body">
                 <a class="cat cat--security" href="/index.html?cat=security">Cybersecurity</a>
-                <h3 class="card-title"><a href="/article-template.html">Zero Trust on AWS: Replacing Your VPN with Identity-Aware Access</a></h3>
-                <p class="card-dek">A phased migration plan using AWS Verified Access, your existing IdP, and device posture signals — without a big-bang cutover.</p>
-                <div class="byline"><span><strong>Priya Raman</strong></span><span class="dot"><time datetime="2026-10-27">Oct 27</time></span><span class="dot">6 min</span></div>
+                <h3 class="card-title"><a href="/article-template.html">Zero Trust on AWS: replacing your VPN with identity-aware access</a></h3>
+                <p class="card-dek">A phased migration plan using AWS Verified Access, your existing identity provider, and device posture signals, without a big-bang cutover.</p>
+                <div class="card-meta"><span><strong>Priya Raman</strong>, <time datetime="2026-10-27">Oct 27</time></span><span>6 min read</span></div>
               </div>
             </article>
 
-            <article class="card" data-cat="devops">
-              <div class="card-art art art--devops"><span class="art-label">Platform Eng</span></div>
+            <article class="card" data-cat="devops" data-published="2026-10-26">
+              <div class="card-art art art--devops"><div class="card-badges"></div><span class="art-label">Platform engineering</span></div>
               <div class="card-body">
                 <a class="cat cat--devops" href="/index.html?cat=devops">DevOps</a>
-                <h3 class="card-title"><a href="/article-template.html">Platform Engineering vs. DevOps: What Internal Developer Platforms Actually Change</a></h3>
-                <p class="card-dek">Golden paths, paved roads, and the org chart questions you have to answer before buying a portal.</p>
-                <div class="byline"><span><strong>Marcus Lindqvist</strong></span><span class="dot"><time datetime="2026-10-26">Oct 26</time></span><span class="dot">11 min</span></div>
+                <h3 class="card-title"><a href="/article-template.html">Platform engineering vs. DevOps: what internal developer platforms actually change</a></h3>
+                <p class="card-dek">Golden paths, paved roads, and the org chart questions you have to answer before you buy a developer portal.</p>
+                <div class="card-meta"><span><strong>Marcus Lindqvist</strong>, <time datetime="2026-10-26">Oct 26</time></span><span>11 min read</span></div>
               </div>
             </article>
 
-            <article class="card" data-cat="cloud">
-              <div class="card-art art art--cloud"><span class="art-label">FinOps · K8s</span></div>
+            <article class="card" data-cat="cloud" data-published="2026-10-24" data-updated="2026-10-28">
+              <div class="card-art art art--cloud"><div class="card-badges"></div><span class="art-label">Kubernetes FinOps</span></div>
               <div class="card-body">
-                <a class="cat cat--cloud" href="/index.html?cat=cloud">Cloud Architecture</a>
-                <h3 class="card-title"><a href="/article-template.html">Kubernetes Cost Allocation: Building a Showback Model Finance Will Trust</a></h3>
-                <p class="card-dek">Requests vs. usage, idle capacity, shared services — a defensible method for splitting cluster spend across teams.</p>
-                <div class="byline"><span><strong>Daniel Okafor</strong></span><span class="dot"><time datetime="2026-10-24">Oct 24</time></span><span class="dot">13 min</span></div>
+                <a class="cat cat--cloud" href="/index.html?cat=cloud">Cloud architecture</a>
+                <h3 class="card-title"><a href="/article-template.html">Kubernetes cost allocation: building a showback model finance will trust</a></h3>
+                <p class="card-dek">Requests vs. usage, idle capacity, and shared services: a defensible method for splitting cluster spend across teams.</p>
+                <div class="card-meta"><span><strong>Daniel Okafor</strong>, <time datetime="2026-10-24">Oct 24</time></span><span>13 min read</span></div>
+              </div>
+            </article>
+
+            <article class="card" data-cat="ai" data-published="2026-10-23">
+              <div class="card-art art art--ai"><div class="card-badges"></div><span class="art-label">RAG evaluation</span></div>
+              <div class="card-body">
+                <a class="cat cat--ai" href="/index.html?cat=ai">AI workflows</a>
+                <h3 class="card-title"><a href="/article-template.html">Evaluating RAG pipelines for internal knowledge bases: a practical scorecard</a></h3>
+                <p class="card-dek">Retrieval precision, groundedness, and freshness: how to score an internal assistant before employees stop trusting it.</p>
+                <div class="card-meta"><span><strong>Aisha Benali</strong>, <time datetime="2026-10-23">Oct 23</time></span><span>15 min read</span></div>
               </div>
             </article>
 
@@ -199,111 +265,86 @@
               <div class="ad-slot ad-slot--infeed" data-ad-key="infeed" data-ad-format="rectangle"></div>
             </div>
 
-            <article class="card" data-cat="ai">
-              <div class="card-art art art--ai"><span class="art-label">RAG · Evals</span></div>
+            <article class="card" data-cat="saas" data-published="2026-10-21" data-updated="2026-10-27">
+              <div class="card-art art art--saas"><div class="card-badges"></div><span class="art-label">SaaS procurement</span></div>
               <div class="card-body">
-                <a class="cat cat--ai" href="/index.html?cat=ai">AI Workflows</a>
-                <h3 class="card-title"><a href="/article-template.html">Evaluating RAG Pipelines for Internal Knowledge Bases: A Practical Scorecard</a></h3>
-                <p class="card-dek">Retrieval precision, groundedness, and freshness — how to score an internal assistant before employees stop trusting it.</p>
-                <div class="byline"><span><strong>Aisha Benali</strong></span><span class="dot"><time datetime="2026-10-23">Oct 23</time></span><span class="dot">15 min</span></div>
+                <a class="cat cat--saas" href="/index.html?cat=saas">SaaS tools</a>
+                <h3 class="card-title"><a href="/article-template.html">SSO tax, SCIM, and audit logs: the SaaS procurement checklist for security teams</a></h3>
+                <p class="card-dek">Twelve questions to settle before you sign, and which ones vendors quietly reserve for their enterprise tier.</p>
+                <div class="card-meta"><span><strong>Priya Raman</strong>, <time datetime="2026-10-21">Oct 21</time></span><span>9 min read</span></div>
               </div>
             </article>
 
-            <article class="card" data-cat="saas">
-              <div class="card-art art art--saas"><span class="art-label">Procurement</span></div>
-              <div class="card-body">
-                <a class="cat cat--saas" href="/index.html?cat=saas">SaaS Tools</a>
-                <h3 class="card-title"><a href="/article-template.html">SSO Tax, SCIM, and Audit Logs: The SaaS Procurement Checklist for Security Teams</a></h3>
-                <p class="card-dek">The twelve questions to settle before signature — and which ones vendors quietly reserve for their enterprise tier.</p>
-                <div class="byline"><span><strong>Priya Raman</strong></span><span class="dot"><time datetime="2026-10-21">Oct 21</time></span><span class="dot">9 min</span></div>
-              </div>
-            </article>
-
-            <article class="card" data-cat="security">
-              <div class="card-art art art--security"><span class="art-label">Identity</span></div>
+            <article class="card" data-cat="security" data-published="2026-10-19">
+              <div class="card-art art art--security"><div class="card-badges"></div><span class="art-label">Workforce identity</span></div>
               <div class="card-body">
                 <a class="cat cat--security" href="/index.html?cat=security">Cybersecurity</a>
-                <h3 class="card-title"><a href="/article-template.html">Passkeys in the Enterprise: Rollout Lessons for Workforce Identity</a></h3>
-                <p class="card-dek">Device-bound vs. synced passkeys, recovery flows, and how to retire SMS one-time codes without flooding the help desk.</p>
-                <div class="byline"><span><strong>Priya Raman</strong></span><span class="dot"><time datetime="2026-10-19">Oct 19</time></span><span class="dot">12 min</span></div>
+                <h3 class="card-title"><a href="/article-template.html">Passkeys in the enterprise: rollout lessons for workforce identity</a></h3>
+                <p class="card-dek">Device-bound vs. synced passkeys, recovery flows, and how to retire SMS codes without flooding the help desk.</p>
+                <div class="card-meta"><span><strong>Priya Raman</strong>, <time datetime="2026-10-19">Oct 19</time></span><span>12 min read</span></div>
               </div>
             </article>
 
-            <article class="card" data-cat="devops">
-              <div class="card-art art art--devops"><span class="art-label">Terraform</span></div>
+            <article class="card" data-cat="devops" data-published="2026-10-17" data-updated="2026-10-25">
+              <div class="card-art art art--devops"><div class="card-badges"></div><span class="art-label">Terraform</span></div>
               <div class="card-body">
                 <a class="cat cat--devops" href="/index.html?cat=devops">DevOps</a>
-                <h3 class="card-title"><a href="/article-template.html">Terraform State at Scale: Remote Backends, Locking, and Drift Detection</a></h3>
+                <h3 class="card-title"><a href="/article-template.html">Terraform state at scale: remote backends, locking, and drift detection</a></h3>
                 <p class="card-dek">How to split state by blast radius, keep locks from becoming bottlenecks, and catch drift before an incident does.</p>
-                <div class="byline"><span><strong>Marcus Lindqvist</strong></span><span class="dot"><time datetime="2026-10-17">Oct 17</time></span><span class="dot">14 min</span></div>
+                <div class="card-meta"><span><strong>Marcus Lindqvist</strong>, <time datetime="2026-10-17">Oct 17</time></span><span>14 min read</span></div>
               </div>
             </article>
 
-            <article class="card" data-cat="cloud">
-              <div class="card-art art art--cloud"><span class="art-label">Azure</span></div>
+            <article class="card" data-cat="cloud" data-published="2026-10-15">
+              <div class="card-art art art--cloud"><div class="card-badges"></div><span class="art-label">Azure governance</span></div>
               <div class="card-body">
-                <a class="cat cat--cloud" href="/index.html?cat=cloud">Cloud Architecture</a>
-                <h3 class="card-title"><a href="/article-template.html">Azure Landing Zones Explained: Management Groups, Policy, and Subscription Vending</a></h3>
-                <p class="card-dek">A plain-language walkthrough of the reference hierarchy and the decisions that are expensive to change later.</p>
-                <div class="byline"><span><strong>Daniel Okafor</strong></span><span class="dot"><time datetime="2026-10-15">Oct 15</time></span><span class="dot">12 min</span></div>
+                <a class="cat cat--cloud" href="/index.html?cat=cloud">Cloud architecture</a>
+                <h3 class="card-title"><a href="/article-template.html">Azure landing zones explained: management groups, policy, and subscription vending</a></h3>
+                <p class="card-dek">A plain-language walkthrough of the reference hierarchy, and the decisions that are expensive to change later.</p>
+                <div class="card-meta"><span><strong>Daniel Okafor</strong>, <time datetime="2026-10-15">Oct 15</time></span><span>12 min read</span></div>
               </div>
             </article>
 
-            <article class="card" data-cat="ai">
-              <div class="card-art art art--ai"><span class="art-label">ITSM · Agents</span></div>
+            <article class="card" data-cat="ai" data-published="2026-10-13">
+              <div class="card-art art art--ai"><div class="card-badges"></div><span class="art-label">ITSM automation</span></div>
               <div class="card-body">
-                <a class="cat cat--ai" href="/index.html?cat=ai">AI Workflows</a>
-                <h3 class="card-title"><a href="/article-template.html">Agentic Workflows in ITSM: Where Automation Helps and Where It Needs a Human</a></h3>
-                <p class="card-dek">Ticket triage, runbook execution, and change approvals — mapping each step to an autonomy level you can defend in an audit.</p>
-                <div class="byline"><span><strong>Aisha Benali</strong></span><span class="dot"><time datetime="2026-10-13">Oct 13</time></span><span class="dot">10 min</span></div>
+                <a class="cat cat--ai" href="/index.html?cat=ai">AI workflows</a>
+                <h3 class="card-title"><a href="/article-template.html">Agentic workflows in ITSM: where automation helps and where it needs a human</a></h3>
+                <p class="card-dek">Ticket triage, runbook execution, and change approvals, mapped to an autonomy level you can defend in an audit.</p>
+                <div class="card-meta"><span><strong>Aisha Benali</strong>, <time datetime="2026-10-13">Oct 13</time></span><span>10 min read</span></div>
               </div>
             </article>
           </div>
-          <p class="empty-state" id="gridEmpty" hidden>No articles in this category yet. <a href="/index.html">See all guides</a>.</p>
+          <p class="empty-state" id="gridEmpty" hidden>Nothing in this category yet. <a href="/index.html">See all guides</a>.</p>
         </section>
 
         <!-- ===================== SIDEBAR ===================== -->
         <aside class="sidebar" aria-label="Sidebar">
           <section class="widget" aria-labelledby="trending-heading">
-            <h2 id="trending-heading">Trending</h2>
+            <h2 id="trending-heading">Most read this week</h2>
             <ol class="trending">
-              <li><a href="/article-template.html">Zero Trust on AWS: Replacing Your VPN with Identity-Aware Access</a></li>
-              <li><a href="/article-template.html">The Real Cost of Multi-Cloud in 2026</a></li>
-              <li><a href="/article-template.html">SSO Tax, SCIM, and Audit Logs: The SaaS Procurement Checklist</a></li>
-              <li><a href="/article-template.html">Terraform State at Scale: Remote Backends, Locking, and Drift</a></li>
-              <li><a href="/article-template.html">Evaluating RAG Pipelines: A Practical Scorecard</a></li>
+              <li><a href="/article-template.html">Zero Trust on AWS: replacing your VPN with identity-aware access</a></li>
+              <li><a href="/article-template.html">The real cost of multi-cloud in 2026</a></li>
+              <li><a href="/article-template.html">SSO tax, SCIM, and audit logs: the SaaS procurement checklist</a></li>
+              <li><a href="/article-template.html">Terraform state at scale: remote backends, locking, and drift</a></li>
+              <li><a href="/article-template.html">Evaluating RAG pipelines: a practical scorecard</a></li>
             </ol>
           </section>
 
           <section class="widget" aria-labelledby="topics-heading">
-            <h2 id="topics-heading">Topics</h2>
+            <h2 id="topics-heading">Browse by topic</h2>
             <ul class="pills">
-              <li><a class="pill" href="/index.html?cat=cloud" data-cat-link="cloud">Cloud Architecture</a></li>
+              <li><a class="pill" href="/index.html?cat=cloud" data-cat-link="cloud">Cloud architecture</a></li>
               <li><a class="pill" href="/index.html?cat=security" data-cat-link="security">Cybersecurity</a></li>
-              <li><a class="pill" href="/index.html?cat=saas" data-cat-link="saas">SaaS Tools</a></li>
+              <li><a class="pill" href="/index.html?cat=saas" data-cat-link="saas">SaaS tools</a></li>
               <li><a class="pill" href="/index.html?cat=devops" data-cat-link="devops">DevOps</a></li>
-              <li><a class="pill" href="/index.html?cat=ai" data-cat-link="ai">AI Workflows</a></li>
-              <li><a class="pill" href="/index.html?q=zero%20trust">Zero Trust</a></li>
+              <li><a class="pill" href="/index.html?cat=ai" data-cat-link="ai">AI workflows</a></li>
+              <li><a class="pill" href="/index.html?q=zero%20trust">Zero trust</a></li>
               <li><a class="pill" href="/index.html?q=finops">FinOps</a></li>
               <li><a class="pill" href="/index.html?q=kubernetes">Kubernetes</a></li>
               <li><a class="pill" href="/index.html?q=identity">Identity</a></li>
               <li><a class="pill" href="/index.html?q=terraform">Terraform</a></li>
             </ul>
-          </section>
-
-          <section class="widget newsletter" aria-labelledby="nl-heading">
-            <h2 id="nl-heading">The Weekly Stack</h2>
-            <p>One email every Tuesday: the week's most useful guide, one tool worth evaluating, and one thing to stop doing.</p>
-            <!-- AUDIT FIX: POST via Netlify Forms (was GET → email address leaked into URLs, logs and referrers) -->
-            <form id="newsletterForm" name="newsletter" method="POST" action="/" data-netlify="true" netlify-honeypot="nl_website" novalidate>
-              <input type="hidden" name="form-name" value="newsletter">
-              <p class="hp"><label>Leave this empty <input name="nl_website" tabindex="-1" autocomplete="off" data-honeypot></label></p>
-              <label for="nl-email" class="sr-only">Work email</label>
-              <input class="input" id="nl-email" type="email" name="email" placeholder="you@company.com" autocomplete="email" maxlength="254" required>
-              <button class="btn" type="submit">Subscribe</button>
-              <p class="nl-note">By subscribing you agree to our <a href="/privacy.html">Privacy Policy</a>. Unsubscribe anytime.</p>
-              <div class="form-status" id="newsletterStatus" role="status" hidden></div>
-            </form>
           </section>
 
           <!-- AdSense Slot: Sidebar Sticky (desktop only · 300x600 · reserved 600px) -->
@@ -318,34 +359,55 @@
     </div>
   </main>
 
+  <!-- ===================== NEWSLETTER BAND ===================== -->
+  <section class="nl-band" id="newsletter" aria-labelledby="nl-heading">
+    <div class="container nl-band-inner">
+      <div>
+        <h2 id="nl-heading">The Weekly Stack</h2>
+        <p>One email every Tuesday with the week's changelog: new guides, revised guides, and exactly what changed in them. No vendor promotions.</p>
+      </div>
+      <!-- POST via Netlify Forms — the email never appears in a URL -->
+      <form id="newsletterForm" name="newsletter" method="POST" action="/" data-netlify="true" netlify-honeypot="nl_website" novalidate>
+        <input type="hidden" name="form-name" value="newsletter">
+        <p class="hp"><label>Leave this empty <input name="nl_website" tabindex="-1" autocomplete="off" data-honeypot></label></p>
+        <label for="nl-email" class="sr-only">Work email</label>
+        <input class="input" id="nl-email" type="email" name="email" placeholder="you@company.com" autocomplete="email" maxlength="254" required>
+        <button class="btn" type="submit">Subscribe</button>
+        <p class="nl-note">By subscribing you agree to our <a href="/privacy.html">Privacy Policy</a>. Unsubscribe from any issue.</p>
+        <div class="form-status" id="newsletterStatus" role="status" hidden></div>
+      </form>
+    </div>
+  </section>
+
   <!-- ===================== FOOTER ===================== -->
   <footer class="site-footer">
     <div class="container footer-grid">
       <div>
         <a class="brand" href="/index.html" aria-label="TechStack Lab home">
           <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="7" fill="var(--accent)"/><path d="M9 11h14M9 16h10M9 21h6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
-          <span class="brand-name">TechStack<span>Lab</span></span>
+          <span class="brand-name">TechStack <span>Lab</span></span>
         </a>
         <p>Independent, field-tested guidance on enterprise cloud, security, DevOps, SaaS and AI workflows. Advertising never influences editorial coverage.</p>
       </div>
       <nav aria-label="Categories">
         <h2>Coverage</h2>
         <ul>
-          <li><a href="/index.html?cat=cloud">Cloud Architecture</a></li>
+          <li><a href="/index.html?cat=cloud">Cloud architecture</a></li>
           <li><a href="/index.html?cat=security">Cybersecurity</a></li>
-          <li><a href="/index.html?cat=saas">SaaS Tools</a></li>
+          <li><a href="/index.html?cat=saas">SaaS tools</a></li>
           <li><a href="/index.html?cat=devops">DevOps</a></li>
-          <li><a href="/index.html?cat=ai">AI Workflows</a></li>
+          <li><a href="/index.html?cat=ai">AI workflows</a></li>
         </ul>
       </nav>
       <nav aria-label="Company">
         <h2>Company</h2>
         <ul>
-          <li><a href="/about.html">About Us</a></li>
-          <li><a href="/about.html#editorial">Editorial Guidelines</a></li>
+          <li><a href="/about.html">About us</a></li>
+          <li><a href="/about.html#editorial">Editorial guidelines</a></li>
           <li><a href="/contact.html">Contact</a></li>
-          <li><a href="/privacy.html">Privacy Policy</a></li>
-          <li><a href="/terms.html">Terms &amp; Disclaimer</a></li>
+          <li><a href="/feed.xml">RSS feed</a></li>
+          <li><a href="/privacy.html">Privacy policy</a></li>
+          <li><a href="/terms.html">Terms and disclaimer</a></li>
         </ul>
       </nav>
     </div>
