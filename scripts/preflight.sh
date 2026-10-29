@@ -2,10 +2,10 @@
 # Pre-deploy gate: fails the build if launch placeholders are still present.
 # Staging/preview deploys can bypass with ALLOW_PLACEHOLDERS=1 (set in the host's env settings).
 set -eu
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../public"
 
 PATTERN='ca-pub-XXXXXXXXXXXXXXXX|pub-XXXXXXXXXXXXXXXX|REPLACE-WITH-REAL-PROFILE|\[Registered business address\]|\[City, Country\]|\[your jurisdiction\]'
-HITS=$(grep -RInE "$PATTERN" --include='*.html' --include='*.js' --include='*.txt' . | grep -v '^./scripts/' || true)
+HITS=$(grep -RInE "$PATTERN" --include='*.html' --include='*.js' --include='*.txt' . || true)
 
 # Every page must link the privacy policy, and ads.txt must exist (AdSense requirements)
 MISSING=""

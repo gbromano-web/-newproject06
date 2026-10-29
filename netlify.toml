@@ -1,5 +1,5 @@
 [build]
-  publish = "."
+  publish = "public"
   # AUDIT FIX: production deploys are blocked while launch placeholders remain.
   # For a preview, set ALLOW_PLACEHOLDERS=1 in Site settings → Environment variables.
   command = "sh scripts/preflight.sh"
@@ -34,6 +34,3 @@
     Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
-  for = "/scripts/*"
-  [headers.values]
-    X-Robots-Tag = "noindex"
