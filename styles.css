@@ -535,3 +535,5 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .toggle-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; font-size: .9rem; }
 .toggle-row small { display: block; color: var(--text-3); font-size: .8rem; }
 .toggle-row input { width: 20px; height: 20px; accent-color: var(--accent); flex: none; margin-top: 2px; }
+.newsletter .nl-note { font-size: .78rem; color: var(--text-3); margin: 0; }
+.newsletter .form-status { margin-top: 4px; font-size: .85rem; }

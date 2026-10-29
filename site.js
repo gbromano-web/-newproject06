@@ -232,50 +232,101 @@
     });
   }
 
+  /* ---------- Shared form submission ---------- */
+  var EMAIL_RE = /^[^\s@]{1,64}@[^\s@]{1,253}\.[^\s@]{2,}$/;
+  var SUBMIT_TIMEOUT_MS = 10000;
+
+  // AUDIT FIX: POST bodies only (never PII in URLs), hard timeout, honeypot, and one retry-safe path.
+  // Works out of the box on Netlify Forms (data-netlify). On other hosts, set the form's
+  // action to your Formspree / Basin / serverless endpoint.
+  function postForm(formEl) {
+    var hp = formEl.querySelector('[data-honeypot]');
+    if (hp && hp.value) return Promise.resolve({ ok: true, bot: true }); // silently drop bots
+    var ctrl = 'AbortController' in window ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, SUBMIT_TIMEOUT_MS) : null;
+    return fetch(formEl.getAttribute('action') || '/', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(new FormData(formEl)).toString(),
+      signal: ctrl ? ctrl.signal : undefined,
+      credentials: 'same-origin'
+    }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r;
+    }).finally(function () { if (timer) clearTimeout(timer); });
+  }
+
+  function showStatus(el, ok, okText) {
+    el.className = 'form-status ' + (ok ? 'form-status--ok' : 'form-status--err');
+    if (ok) el.textContent = okText;
+    else el.innerHTML = 'We couldn’t send this right now. Please email us directly at <a href="mailto:support@techstacklab.com">support@techstacklab.com</a>.';
+    el.hidden = false;
+  }
+
   /* ---------- Contact form ---------- */
   var form = $('#contactForm');
   if (form) {
     var f = form.elements; // use .elements — form.name would return the <form>'s own name attribute
     var status = $('#formStatus');
-    var qs = new URLSearchParams(window.location.search);
-    var topic = qs.get('topic');
-    if (topic && f.topic && f.topic.querySelector('option[value="' + topic.replace(/[^a-z]/g, '') + '"]')) f.topic.value = topic;
-    var emailParam = qs.get('email');
-    if (emailParam && f.email) { f.email.value = emailParam; if (f.topic) f.topic.value = 'newsletter'; }
+    var topic = new URLSearchParams(window.location.search).get('topic');
+    // Only accept a topic that matches an existing <option> (allow-list, no selector injection)
+    if (topic && f.topic) {
+      var allowed = Array.prototype.map.call(f.topic.options, function (o) { return o.value; });
+      if (allowed.indexOf(topic) !== -1) f.topic.value = topic;
+    }
 
     var setErr = function (name, msg) { var el = $('[data-error-for="' + name + '"]', form); if (el) el.textContent = msg || ''; };
+    var busy = false;
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
+      if (busy) return; // AUDIT FIX: block double submits
       var ok = true;
+      var name = f.name.value.trim(), email = f.email.value.trim(), msg = f.message.value.trim();
       ['name', 'email', 'message', 'consent'].forEach(function (n) { setErr(n, ''); });
-      if (!f.name.value.trim()) { setErr('name', 'Please enter your name.'); ok = false; }
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.value.trim())) { setErr('email', 'Please enter a valid email address.'); ok = false; }
-      if (f.message.value.trim().length < 20) { setErr('message', 'Please write at least 20 characters so we can help.'); ok = false; }
+      if (!name || name.length > 100) { setErr('name', 'Please enter your name (up to 100 characters).'); ok = false; }
+      if (!EMAIL_RE.test(email) || email.length > 254) { setErr('email', 'Please enter a valid email address.'); ok = false; }
+      if (msg.length < 20 || msg.length > 5000) { setErr('message', 'Please write between 20 and 5,000 characters.'); ok = false; }
       if (!f.consent.checked) { setErr('consent', 'Please confirm you have read the Privacy Policy.'); ok = false; }
       if (!ok) return;
 
+      busy = true;
       var btn = form.querySelector('button[type="submit"]');
       btn.disabled = true; btn.textContent = 'Sending…';
-
-      // Works out of the box on Netlify Forms (data-netlify). On other hosts, set the form's
-      // action to your Formspree / Basin / serverless endpoint.
-      var data = new FormData(form);
-      fetch(form.getAttribute('action') || '/', {
-        method: 'POST',
-        headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(data).toString()
-      }).then(function (r) {
-        if (!r.ok) throw new Error(r.status);
-        status.className = 'form-status form-status--ok';
-        status.textContent = 'Thanks — your message has been sent. We reply to most messages within two business days.';
+      postForm(form).then(function () {
+        showStatus(status, true, 'Thanks — your message has been sent. We reply to most messages within two business days.');
         form.reset();
-      }).catch(function () {
-        status.className = 'form-status form-status--err';
-        status.innerHTML = 'We couldn’t send your message right now. Please email us directly at <a href="mailto:support@techstacklab.com">support@techstacklab.com</a>.';
-      }).then(function () {
-        status.hidden = false; btn.disabled = false; btn.textContent = 'Send message';
+      }).catch(function (err) {
+        if (window.console) console.error('[contact] submit failed:', err && err.name === 'AbortError' ? 'timeout' : err);
+        showStatus(status, false);
+      }).finally(function () {
+        busy = false; btn.disabled = false; btn.textContent = 'Send message';
       });
+    });
+  }
+
+  /* ---------- Newsletter form ---------- */
+  var nl = $('#newsletterForm');
+  if (nl) {
+    var nlStatus = $('#newsletterStatus');
+    var nlBusy = false;
+    nl.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (nlBusy) return;
+      var email = nl.elements.email.value.trim();
+      if (!EMAIL_RE.test(email) || email.length > 254) {
+        nlStatus.className = 'form-status form-status--err'; nlStatus.textContent = 'Please enter a valid email address.'; nlStatus.hidden = false; return;
+      }
+      nlBusy = true;
+      var btn = nl.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      postForm(nl).then(function () {
+        showStatus(nlStatus, true, 'Thanks — you’re on the list. You can unsubscribe from any issue.');
+        nl.reset();
+      }).catch(function (err) {
+        if (window.console) console.error('[newsletter] submit failed:', err);
+        showStatus(nlStatus, false);
+      }).finally(function () { nlBusy = false; btn.disabled = false; });
     });
   }
 

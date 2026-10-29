@@ -90,16 +90,16 @@
                set action="https://formspree.io/f/YOUR_ID" (or your own endpoint). -->
           <form id="contactForm" name="contact" method="POST" action="/" data-netlify="true" netlify-honeypot="company_website" novalidate>
             <input type="hidden" name="form-name" value="contact">
-            <p class="hp"><label>Leave this empty <input name="company_website" tabindex="-1" autocomplete="off"></label></p>
+            <p class="hp"><label>Leave this empty <input name="company_website" tabindex="-1" autocomplete="off" data-honeypot></label></p>
 
             <div class="field">
               <label for="cf-name">Your name</label>
-              <input class="input" id="cf-name" name="name" type="text" autocomplete="name" required>
+              <input class="input" id="cf-name" name="name" type="text" autocomplete="name" maxlength="100" required>
               <span class="field-error" data-error-for="name" aria-live="polite"></span>
             </div>
             <div class="field">
               <label for="cf-email">Work email</label>
-              <input class="input" id="cf-email" name="email" type="email" autocomplete="email" required>
+              <input class="input" id="cf-email" name="email" type="email" autocomplete="email" maxlength="254" required>
               <span class="field-error" data-error-for="email" aria-live="polite"></span>
             </div>
             <div class="field">
@@ -115,7 +115,7 @@
             </div>
             <div class="field">
               <label for="cf-message">Message</label>
-              <textarea class="textarea" id="cf-message" name="message" required></textarea>
+              <textarea class="textarea" id="cf-message" name="message" minlength="20" maxlength="5000" required></textarea>
               <span class="hint">For corrections, include the article link and the passage in question.</span>
               <span class="field-error" data-error-for="message" aria-live="polite"></span>
             </div>

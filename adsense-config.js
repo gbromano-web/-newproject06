@@ -16,15 +16,16 @@
 
   /* ---------- 1. Configuration — edit these values ---------- */
   var CONFIG = {
-    client: 'ca-pub-XXXXXXXXXXXXXXXX',          // your AdSense publisher ID
-    slots: {                                     // ad unit IDs from AdSense → Ads → By ad unit
-      header:      '1111111111',
-      midContent1: '2222222222',
-      midContent2: '3333333333',
-      infeed:      '4444444444',
-      sidebar:     '5555555555',
-      sticky:      '6666666666'
+    client: 'ca-pub-XXXXXXXXXXXXXXXX',          // your AdSense publisher ID (ca-pub- + 16 digits)
+    slots: {                                     // ad unit IDs from AdSense → Ads → By ad unit (10 digits)
+      header:      '',                           // empty = slot stays reserved but is never requested
+      midContent1: '',
+      midContent2: '',
+      infeed:      '',
+      sidebar:     '',
+      sticky:      ''
     },
+    consentMaxAgeDays: 365,                      // re-ask for consent after this many days (GDPR good practice)
     lazyRootMargin: '200px 0px',                 // start loading this far before a slot is visible
     idleFallbackMs: 3500,                        // load library after this delay if no interaction
     stickyShowAfterPx: 600,                      // reveal mobile anchor after this much scroll
@@ -39,6 +40,12 @@
   };
 
   var log = function () { if (CONFIG.debug && window.console) console.log.apply(console, ['[TSLAds]'].concat([].slice.call(arguments))); };
+
+  // AUDIT FIX: fail closed on placeholder/invalid IDs. Never request ads with a fake publisher ID
+  // (invalid requests, console errors, and a malformed account footprint at review time).
+  var CLIENT_OK = /^ca-pub-\d{16}$/.test(CONFIG.client);
+  var SLOT_RE = /^\d{10}$/;
+  if (!CLIENT_OK && window.console) console.warn('[TSLAds] AdSense disabled: CONFIG.client is not a valid publisher ID.');
 
   /* ---------- 2. Consent Mode v2 defaults (must run before any Google tag) ---------- */
   window.dataLayer = window.dataLayer || [];
@@ -62,7 +69,11 @@
       var raw = localStorage.getItem(CONFIG.consentStorageKey);
       if (!raw) return null;
       var c = JSON.parse(raw);
-      return c && c.v === CONFIG.consentVersion ? c : null;
+      if (!c || c.v !== CONFIG.consentVersion || typeof c.ts !== 'string') return null;
+      // AUDIT FIX: consent expires — stale or unparseable timestamps force a fresh choice
+      var age = Date.now() - Date.parse(c.ts);
+      if (!(age >= 0) || age > CONFIG.consentMaxAgeDays * 864e5) return null;
+      return { v: c.v, ads: c.ads === true, personalization: c.personalization === true, analytics: c.analytics === true, ts: c.ts };
     } catch (e) { return null; }
   }
 
@@ -74,18 +85,19 @@
   var GPC = navigator.globalPrivacyControl === true;
 
   function applyConsent(c) {
-    if (GPC) c.personalization = false;
+    // AUDIT FIX: GPC overrides personalization without mutating the stored record
+    var personalize = c.ads && c.personalization && !GPC;
     gtag('consent', 'update', {
       ad_storage: c.ads ? 'granted' : 'denied',
       ad_user_data: c.ads ? 'granted' : 'denied',
-      ad_personalization: c.ads && c.personalization ? 'granted' : 'denied',
+      ad_personalization: personalize ? 'granted' : 'denied',
       analytics_storage: c.analytics ? 'granted' : 'denied'
     });
     gtag('set', 'ads_data_redaction', !c.ads);
     window.adsbygoogle = window.adsbygoogle || [];
     // Non-personalized ads when personalization is not granted
-    window.adsbygoogle.requestNonPersonalizedAds = (c.ads && c.personalization) ? 0 : 1;
-    log('consent applied', c);
+    window.adsbygoogle.requestNonPersonalizedAds = personalize ? 0 : 1;
+    log('consent applied', c, 'GPC:', GPC);
   }
 
   var consent = readConsent();
@@ -96,6 +108,7 @@
 
   function loadLibrary() {
     if (libState !== 'idle') return;
+    if (!CLIENT_OK) { libState = 'failed'; markAll('is-unfilled'); return; }
     if (!CONFIG.useGoogleCMP && !consent) { log('waiting for consent'); return; }
     libState = 'loading';
     var s = document.createElement('script');
@@ -127,7 +140,7 @@
   function buildIns(slotEl) {
     var key = slotEl.getAttribute('data-ad-key');
     var slotId = CONFIG.slots[key];
-    if (!slotId) { slotEl.classList.add('is-unfilled'); return null; }
+    if (!slotId || !SLOT_RE.test(slotId)) { slotEl.classList.add('is-unfilled'); log('no valid slot id for', key); return null; }
 
     var ins = document.createElement('ins');
     ins.className = 'adsbygoogle';
@@ -176,14 +189,27 @@
 
   // AdSense sets data-ad-status="filled" | "unfilled" on the <ins>
   function watchFill(slotEl, ins) {
+    var settled = false;
     var mo = new MutationObserver(function () {
       var status = ins.getAttribute('data-ad-status');
       if (!status) return;
-      slotEl.classList.add(status === 'filled' ? 'is-filled' : 'is-unfilled');
+      settled = true;
+      var filled = status === 'filled';
+      slotEl.classList.toggle('is-filled', filled);
+      slotEl.classList.toggle('is-unfilled', !filled);
       slotEl.dataset.adState = status;
       mo.disconnect();
     });
     mo.observe(ins, { attributes: true, attributeFilter: ['data-ad-status'] });
+    // AUDIT FIX: watchdog — if no fill status arrives (partial ad blocking, network stall),
+    // stop the skeleton animation instead of shimmering forever. The observer stays attached,
+    // so a late fill still flips the slot to filled. Reserved height never changes → no CLS.
+    setTimeout(function () {
+      if (settled) return;
+      slotEl.classList.add('is-unfilled');
+      slotEl.dataset.adState = 'timeout';
+      log('fill timeout', slotEl.getAttribute('data-ad-key'));
+    }, 10000);
   }
 
   function markAll(cls) {

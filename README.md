@@ -17,7 +17,10 @@ Strategy and ad-placement plan: see `STRATEGY.md`.
 | `adsense-config.js` | Consent Mode v2, lazy AdSense loader, lazy slot init, fill tracking, mobile anchor, GPC support |
 | `site.js` | Theme toggle, mobile nav, live search, category filter, TOC, read progress, consent banner UI, contact form |
 | `ads.txt`, `robots.txt`, `sitemap.xml` | Crawl + ad-authorization files |
-| `netlify.toml`, `vercel.json` | Hosting config: headers, caching, clean article URL rewrite |
+| `netlify.toml`, `vercel.json` | Hosting config: security headers, safe caching, clean article URL rewrite, preflight build step |
+| `404.html` | Not-found page (noindex) |
+| `scripts/preflight.sh` | Deploy gate: fails the build while launch placeholders remain |
+| `AUDIT.md` | Pre-production audit findings and what was fixed |
 
 ## Before you go live — required edits
 
@@ -39,6 +42,10 @@ Strategy and ad-placement plan: see `STRATEGY.md`.
 
 > Once you pass ~30 articles, consider moving to a static site generator (Eleventy, Astro or Hugo) using these files as the layout — it removes the manual copy step and generates category pages, sitemap and search index for you.
 
+## Preflight check
+
+Run `sh scripts/preflight.sh` before every production deploy. It fails if any publisher ID, author profile, address or jurisdiction placeholder is still present, or if a page is missing its Privacy Policy link. Netlify and Vercel run it automatically as the build step.
+
 ## Local preview
 
 Root-relative paths need a web server (opening the file directly won't load CSS):
@@ -52,12 +59,12 @@ npx serve .          # or: python3 -m http.server 8080
 
 ### Option A — Netlify (recommended: contact form works with zero setup)
 1. Push the folder to a GitHub repo.
-2. Netlify → **Add new site → Import an existing project** → pick the repo. Build command: *(none)*. Publish directory: `.`
+2. Netlify → **Add new site → Import an existing project** → pick the repo. Build settings are read from `netlify.toml` (build command runs `scripts/preflight.sh`, publish directory `.`). For a preview before your IDs are ready, add the environment variable `ALLOW_PLACEHOLDERS=1`; remove it for production.
 3. **Domain management → Add domain** → `techstacklab.com`, then point DNS at Netlify (or move nameservers). HTTPS is issued automatically.
 4. **Forms** → enable form detection; submissions from `contact.html` appear there. Add an email notification to support@techstacklab.com.
 
 ### Option B — Vercel
-1. Push to GitHub → Vercel **Add New → Project** → import. Framework preset: **Other**, no build command, output directory `.`
+1. Push to GitHub → Vercel **Add New → Project** → import. Framework preset: **Other**; build command and output directory come from `vercel.json`. Use `ALLOW_PLACEHOLDERS=1` for previews only.
 2. **Settings → Domains** → add `techstacklab.com` and follow the DNS instructions.
 3. Contact form: create a free Formspree form and set the `action` attribute in `contact.html` to `https://formspree.io/f/YOUR_ID`.
 

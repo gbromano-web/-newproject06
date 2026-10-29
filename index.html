@@ -294,10 +294,15 @@
           <section class="widget newsletter" aria-labelledby="nl-heading">
             <h2 id="nl-heading">The Weekly Stack</h2>
             <p>One email every Tuesday: the week's most useful guide, one tool worth evaluating, and one thing to stop doing.</p>
-            <form action="/contact.html" method="get">
+            <!-- AUDIT FIX: POST via Netlify Forms (was GET → email address leaked into URLs, logs and referrers) -->
+            <form id="newsletterForm" name="newsletter" method="POST" action="/" data-netlify="true" netlify-honeypot="nl_website" novalidate>
+              <input type="hidden" name="form-name" value="newsletter">
+              <p class="hp"><label>Leave this empty <input name="nl_website" tabindex="-1" autocomplete="off" data-honeypot></label></p>
               <label for="nl-email" class="sr-only">Work email</label>
-              <input class="input" id="nl-email" type="email" name="email" placeholder="you@company.com" required>
+              <input class="input" id="nl-email" type="email" name="email" placeholder="you@company.com" autocomplete="email" maxlength="254" required>
               <button class="btn" type="submit">Subscribe</button>
+              <p class="nl-note">By subscribing you agree to our <a href="/privacy.html">Privacy Policy</a>. Unsubscribe anytime.</p>
+              <div class="form-status" id="newsletterStatus" role="status" hidden></div>
             </form>
           </section>
 
