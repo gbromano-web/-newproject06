@@ -33,13 +33,16 @@ jobs:
         uses: actions/configure-pages@v5
 
       # The site uses root paths (/styles.css). A project site is served from /<repo>/,
-      # so prefix those paths. With a custom domain (e.g. techstacklab.com) base_path is
+      # so prefix those paths. With a custom domain (techstacklab.site) base_path is
       # empty and nothing is rewritten.
       - name: Prepare site for the Pages base path
         env:
           BASE: ${{ steps.pages.outputs.base_path }}
         run: |
           mkdir -p _site && cp -R public/. _site/
+          # Pages has no rewrites: give the article its canonical URL (matches netlify.toml / vercel.json)
+          mkdir -p _site/cybersecurity/zero-trust-aws-replace-vpn
+          cp public/article-template.html _site/cybersecurity/zero-trust-aws-replace-vpn/index.html
           if [ -n "$BASE" ]; then
             find _site -type f \( -name '*.html' -o -name '*.css' -o -name '*.js' \) -print0 |
               xargs -0 sed -i \

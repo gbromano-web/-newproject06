@@ -1,6 +1,6 @@
 # TechStack Lab — Phase 1: Business, Content & Monetization Strategy
 
-**Brand:** TechStack Lab · **Domain:** techstacklab.com
+**Brand:** TechStack Lab · **Domain:** techstacklab.site
 **Focus:** Enterprise IT, Cloud Architecture, Cybersecurity, B2B SaaS, DevOps, AI workflow integration.
 
 > Honest framing: no structure or template can *guarantee* AdSense approval. Google reviews the
@@ -41,7 +41,7 @@ Five silos, each with one **pillar page** and 8–15 **cluster articles** linkin
 and sideways to siblings. Cross-silo links only where genuinely relevant.
 
 ```
-techstacklab.com/
+techstacklab.site/
 ├── cloud-architecture/            PILLAR: The Enterprise Cloud Architecture Handbook
 │   ├── multi-cloud-cost-egress-identity
 │   ├── azure-landing-zones-explained

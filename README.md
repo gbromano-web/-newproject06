@@ -1,6 +1,6 @@
 # TechStack Lab
 
-Field-tested guides on enterprise cloud architecture, cybersecurity, DevOps, B2B SaaS and AI workflows — built as a fast, static, AdSense-ready publication at **techstacklab.com**.
+Field-tested guides on enterprise cloud architecture, cybersecurity, DevOps, B2B SaaS and AI workflows — built as a fast, static, AdSense-ready publication at **techstacklab.site**.
 
 ![Homepage — returning visitor](docs/screenshots/homepage.png)
 
@@ -71,26 +71,26 @@ npx serve public          # or: cd public && python3 -m http.server 8080
 ### Option A — Netlify (recommended: contact form works with zero setup)
 1. Push this repository to GitHub.
 2. Netlify → **Add new site → Import an existing project** → pick the repo. Build settings are read from `netlify.toml` (build command runs `scripts/preflight.sh`, publish directory `public`). For a preview before your IDs are ready, add the environment variable `ALLOW_PLACEHOLDERS=1`; remove it for production.
-3. **Domain management → Add domain** → `techstacklab.com`, then point DNS at Netlify (or move nameservers). HTTPS is issued automatically.
+3. **Domain management → Add domain** → `techstacklab.site`, then point DNS at Netlify (or move nameservers). HTTPS is issued automatically.
 4. **Forms** → enable form detection; submissions from `contact.html` appear there. Add an email notification to support@techstacklab.com.
 
 ### Option B — Vercel
 1. Push to GitHub → Vercel **Add New → Project** → import. Framework preset: **Other**; build command and output directory come from `vercel.json`. Use `ALLOW_PLACEHOLDERS=1` for previews only.
-2. **Settings → Domains** → add `techstacklab.com` and follow the DNS instructions.
+2. **Settings → Domains** → add `techstacklab.site` and follow the DNS instructions.
 3. Contact form: create a free Formspree form and set the `action` attribute of the contact and newsletter forms in `public/contact.html` and `public/index.html` to `https://formspree.io/f/YOUR_ID`.
 
 ### Option C — WordPress
 These files are a design reference, not a WP theme. Practical path: use a lightweight block theme (e.g. GeneratePress or Kadence), paste `styles.css` into **Appearance → Customize → Additional CSS** (or a child theme), recreate About/Contact/Privacy/Terms as Pages with the text provided, use **Site Kit by Google** to connect AdSense, and Rank Math or Yoast for schema and sitemaps. Insert ad units with a block-based ad inserter and keep the same placements and reserved heights.
 
 ### After deploy
-- Google Search Console → add the domain property → submit `https://techstacklab.com/sitemap.xml`.
+- Google Search Console → add the domain property → submit `https://techstacklab.site/sitemap.xml`.
 - Run PageSpeed Insights on the homepage and an article (mobile). Targets: LCP < 2.5s, CLS < 0.1, INP < 200ms.
-- Check `https://techstacklab.com/ads.txt` loads as plain text.
+- Check `https://techstacklab.site/ads.txt` loads as plain text.
 
 ## Apply to Google AdSense
 
 1. **Get the content in place first** — 25–35 original, substantive articles across all five categories; every nav link leads to real content (see the checklist in `STRATEGY.md`).
-2. Go to **adsense.google.com → Get started**, sign in, enter `techstacklab.com`, choose your country and accept the terms.
+2. Go to **adsense.google.com → Get started**, sign in, enter `techstacklab.site`, choose your country and accept the terms.
 3. **Connect your site** — choose the meta tag method (already in every page's `<head>`, just swap in your real ID) or the AdSense code snippet. Click **Verify**.
 4. Make sure `ads.txt` contains your real publisher ID.
 5. Set up **Privacy & messaging** (GDPR + US states messages) as described above.

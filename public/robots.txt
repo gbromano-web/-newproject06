@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://techstacklab.com/sitemap.xml
+Sitemap: https://techstacklab.site/sitemap.xml
