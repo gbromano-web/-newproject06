@@ -1,0 +1,64 @@
+# Publishes public/ to GitHub Pages on every push to main.
+# One-time setup: repo Settings → Pages → Build and deployment → Source: "GitHub Actions".
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Preview mode: placeholders (AdSense IDs, address, jurisdiction) are reported, not blocking.
+      # Remove ALLOW_PLACEHOLDERS once real values are in place to make this a hard gate.
+      - name: Preflight check
+        run: sh scripts/preflight.sh
+        env:
+          ALLOW_PLACEHOLDERS: "1"
+
+      - id: pages
+        uses: actions/configure-pages@v5
+
+      # The site uses root paths (/styles.css). A project site is served from /<repo>/,
+      # so prefix those paths. With a custom domain (e.g. techstacklab.com) base_path is
+      # empty and nothing is rewritten.
+      - name: Prepare site for the Pages base path
+        env:
+          BASE: ${{ steps.pages.outputs.base_path }}
+        run: |
+          mkdir -p _site && cp -R public/. _site/
+          if [ -n "$BASE" ]; then
+            find _site -type f \( -name '*.html' -o -name '*.css' -o -name '*.js' \) -print0 |
+              xargs -0 sed -i \
+                -e "s#\(href\|src\|action\)=\"/#\1=\"$BASE/#g" \
+                -e "s#url(\"/fonts/#url(\"$BASE/fonts/#g" \
+                -e "s#u: '/#u: '$BASE/#g"
+          fi
+          touch _site/.nojekyll
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
