@@ -16,7 +16,7 @@
 
   /* ---------- 1. Configuration — edit these values ---------- */
   var CONFIG = {
-    client: 'ca-pub-XXXXXXXXXXXXXXXX',          // your AdSense publisher ID (ca-pub- + 16 digits)
+    client: 'ca-pub-6723626743879731',          // your AdSense publisher ID (ca-pub- + 16 digits)
     slots: {                                     // ad unit IDs from AdSense → Ads → By ad unit (10 digits)
       header:      '',                           // empty = slot stays reserved but is never requested
       midContent1: '',

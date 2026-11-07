@@ -22,12 +22,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Preview mode: placeholders (AdSense IDs, address, jurisdiction) are reported, not blocking.
-      # Remove ALLOW_PLACEHOLDERS once real values are in place to make this a hard gate.
+      # Strict: fails the deploy if any launch placeholder reappears.
       - name: Preflight check
         run: sh scripts/preflight.sh
-        env:
-          ALLOW_PLACEHOLDERS: "1"
 
       - id: pages
         uses: actions/configure-pages@v5
