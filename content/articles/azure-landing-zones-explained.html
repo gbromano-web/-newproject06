@@ -1,0 +1,130 @@
+<!--meta
+{
+  "slug": "azure-landing-zones-explained",
+  "section": "cloud",
+  "kind": "Guide",
+  "short_title": "Azure landing zones",
+  "title": "Azure landing zones explained: management groups, policy, and subscription vending",
+  "description": "A plain-language walkthrough of the Azure landing zone reference hierarchy: what each management group is for, where to assign policy and access, and how subscription vending gives teams environments safely.",
+  "dek": "Microsoft's landing zone guidance can look like a wall of diagrams. Underneath, it is a small set of decisions — how to group subscriptions, where to apply policy, and how teams get new environments — and a few of them are expensive to change later.",
+  "cover_label": "Azure governance",
+  "keywords": ["azure", "landing zone", "management groups", "azure policy", "subscription vending", "cloud adoption framework", "governance"],
+  "published": "2026-11-07",
+  "versions": [{"v": "1.0", "date": "2026-11-07", "note": "First published."}],
+  "changelog_summary": "The reference management group hierarchy, where to assign policy and access, and how subscription vending works.",
+  "takeaways": [
+    "Use management groups to apply policy, not to mirror your org chart; keep the hierarchy to three or four levels.",
+    "Separate platform subscriptions (management, connectivity, identity) from the landing zones where workloads run.",
+    "Corp and Online landing zones exist because connected and internet-facing workloads need different guardrails.",
+    "Give workload teams access at subscription scope through vending, never at management group scope.",
+    "Set a default management group for new subscriptions so nothing lands under the root without guardrails."
+  ],
+  "sources": [
+    {"title": "Management groups in Azure landing zones: organize subscriptions (Microsoft Learn)", "url": "https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/organize-subscriptions"},
+    {"title": "Azure landing zones: Terraform module design considerations (Microsoft Learn)", "url": "https://learn.microsoft.com/azure/architecture/landing-zones/terraform/landing-zone-terraform"},
+    {"title": "Transition a regional organization environment to the Azure landing zone architecture (Microsoft Learn)", "url": "https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/align-scenario-regional-org"}
+  ]
+}
+-->
+<p>An Azure landing zone is the pre-configured environment a workload lands in: a subscription with networking, identity, monitoring and policy already in place, so application teams can deploy without rebuilding the basics or bypassing security. The landing zone architecture in Microsoft's Cloud Adoption Framework is the blueprint for building many of these consistently.</p>
+
+<p>The guidance is extensive, but most of it follows from a few structural decisions. This guide explains those decisions in plain terms, based on Microsoft's current reference design, and flags the ones that are hard to reverse.</p>
+
+<h2 id="building-blocks">The building blocks</h2>
+<p>Azure organises resources in four levels, and landing zones use each one deliberately:</p>
+<ul>
+  <li><strong>Management groups</strong> group subscriptions so that policy and access can be applied to many of them at once. Settings assigned to a management group are inherited by everything beneath it.</li>
+  <li><strong>Subscriptions</strong> are the unit of billing, scale limits and, in landing zone designs, the unit handed to a workload team.</li>
+  <li><strong>Resource groups</strong> organise resources inside a subscription by lifecycle.</li>
+  <li><strong>Resources</strong> are the virtual machines, databases and networks themselves.</li>
+</ul>
+<p>The core idea is to push governance up the hierarchy, onto management groups, and push autonomy down, into subscriptions owned by workload teams.</p>
+
+<h2 id="hierarchy">The reference management group hierarchy</h2>
+<p>Microsoft's reference design uses a small, fixed set of management groups under an <strong>intermediate root</strong>. The intermediate root sits directly beneath the tenant root group, so your organisation's policies are not applied to the tenant root itself.</p>
+
+<figure class="figure">
+  <div class="diagram">
+<pre><code>Tenant root group
+└── Intermediate root (your organisation)
+    ├── Platform
+    │   ├── Management     (monitoring, logging)
+    │   ├── Connectivity   (hub networking, firewall, DNS)
+    │   └── Identity       (domain services, if needed)
+    ├── Security           (security and SIEM tooling)
+    ├── Landing zones
+    │   ├── Corp           (connected to the corporate network)
+    │   ├── Online         (internet-facing)
+    │   └── Local          (Azure Local clusters)
+    ├── Sandboxes          (experimentation, isolated)
+    └── Decommissioned     (cancelled subscriptions)</code></pre>
+  </div>
+  <figcaption>The reference hierarchy described in Microsoft's Cloud Adoption Framework guidance, as of November 2026.</figcaption>
+</figure>
+
+<h3>Platform</h3>
+<p>The platform management group holds the subscriptions that every workload depends on and that a central platform team runs:</p>
+<ul>
+  <li><strong>Management</strong>: a dedicated subscription for monitoring and management, including the central Azure Monitor Logs workspace.</li>
+  <li><strong>Connectivity</strong>: a dedicated subscription for shared networking such as Azure Virtual WAN or a hub virtual network, Azure Firewall, and Azure DNS private zones.</li>
+  <li><strong>Identity</strong>: a dedicated subscription for identity services such as domain controllers, for organisations that still need them.</li>
+</ul>
+<p>The reference design also includes a <strong>Security</strong> group with a dedicated subscription for security and SIEM tooling, such as Microsoft Sentinel.</p>
+
+<h3>Landing zones: Corp, Online and Local</h3>
+<p>Workloads live under the landing zones management group, which carries policies that apply to every workload regardless of type. Beneath it, the default children reflect how a workload connects:</p>
+<ul>
+  <li><strong>Corp</strong> is for workloads that need private connectivity to the corporate network through the connectivity hub. Policies here typically block public endpoints.</li>
+  <li><strong>Online</strong> is for workloads that need direct inbound or outbound internet access, or don't need a virtual network at all. Policies here permit public exposure but require protections such as web application firewalls.</li>
+  <li><strong>Local</strong> is for workloads running on Azure Local clusters, and for the clusters themselves.</li>
+</ul>
+<p>Microsoft notes that these defaults are a good starting point for many organisations. Resist the urge to add children for every department. A new management group is justified when a set of workloads needs <em>different policy</em>, not when it has a different manager.</p>
+
+<h3>Sandboxes and Decommissioned</h3>
+<p><strong>Sandboxes</strong> hold subscriptions for testing and exploration. They are isolated from the Corp and Online landing zones and have less restrictive policies, so engineers can experiment without risking production connectivity.</p>
+<p><strong>Decommissioned</strong> holds subscriptions that are being cancelled. Moving a subscription here applies restrictive policies while it waits; Azure deletes cancelled subscriptions after 30 to 60 days.</p>
+
+<h2 id="design-rules">Design rules that are expensive to change later</h2>
+<h3>Keep the hierarchy flat</h3>
+<p>Azure supports management group trees up to six levels deep, not counting the tenant root and subscription levels. Microsoft recommends staying far below that, ideally at three or four levels. Deep trees make it hard to know which policies apply where, and moving subscriptions between branches becomes risky because inherited settings change.</p>
+<h3>Don't mirror the org chart</h3>
+<p>Organisational structures change far more often than security requirements. If your hierarchy follows departments, every reorganisation becomes a governance project. Group subscriptions by the policy they need, and handle organisational ownership through tags and cost reporting instead.</p>
+<h3>Use management groups for policy, not for access</h3>
+<p>Microsoft's guidance is explicit: don't give workload teams role assignments at management group scope. Assign their access at the subscription or resource group scope, normally during subscription vending. Access granted on a management group is inherited by every subscription beneath it, which is how over-permissioning spreads.</p>
+<p>Platform teams may need roles on management groups for day-to-day operations, but those assignments should be time-bound through Privileged Identity Management rather than standing access.</p>
+<h3>Protect the hierarchy itself</h3>
+<p>By default, any user in a tenant can create management groups. Enable the hierarchy setting that requires authorisation to manage them, and configure a default management group for new subscriptions, such as Sandboxes, so a subscription created outside the normal process never lands under the root with no guardrails.</p>
+
+<h2 id="policy">Where to assign Azure Policy</h2>
+<p>Assign each policy at the highest management group where it should always apply, so new subscriptions inherit it automatically:</p>
+<div class="table-wrap">
+  <table>
+    <caption class="sr-only">Example policy placement by management group</caption>
+    <thead><tr><th scope="col">Scope</th><th scope="col">Example policies</th></tr></thead>
+    <tbody>
+      <tr><td>Intermediate root</td><td>Allowed regions, required tags, sending diagnostic logs to the central workspace</td></tr>
+      <tr><td>Platform</td><td>Controls specific to shared services, such as protecting the hub network from changes</td></tr>
+      <tr><td>Landing zones</td><td>Baseline security for all workloads, such as requiring encryption and backups</td></tr>
+      <tr><td>Corp</td><td>Deny public IP addresses and public endpoints on data services</td></tr>
+      <tr><td>Online</td><td>Require a web application firewall in front of public applications</td></tr>
+      <tr><td>Sandboxes</td><td>Block connectivity to the corporate network; cap spend with budgets</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>These are illustrative examples rather than a complete baseline. Microsoft's landing zone implementations ship with a curated set of policy assignments that is a better starting point than writing your own from scratch.</p>
+<p>Roll out deny policies in audit mode first. A policy that silently blocks a deployment pipeline on Monday morning erodes trust in the whole platform; one that reports non-compliance for two weeks first gives teams time to fix their templates.</p>
+
+<h2 id="vending">Subscription vending</h2>
+<p>Subscription vending is the process, ideally automated, that gives a workload team a new landing zone on request. A good vending process takes a short request and returns a ready-to-use subscription:</p>
+<ol>
+  <li><strong>Request:</strong> the team supplies the workload name, owner, environment, cost centre and whether it is Corp or Online.</li>
+  <li><strong>Create and place:</strong> automation creates the subscription and moves it into the right management group, so it inherits the right policies immediately.</li>
+  <li><strong>Connect:</strong> for Corp workloads, a spoke virtual network is created and peered to the connectivity hub, with an address range from your IP plan.</li>
+  <li><strong>Grant access:</strong> the team's group receives roles at subscription scope, not above it.</li>
+  <li><strong>Set budgets and tags:</strong> a budget with alerts and the standard tags are applied, so costs are attributable from day one.</li>
+</ol>
+<p>Treat vending as code: requests go through version control, and a pipeline applies them. That gives you an audit trail of who requested every subscription and why, which auditors will ask for.</p>
+
+<h2 id="implementation">Implementation options</h2>
+<p>You don't need to build the platform layer by hand. Microsoft maintains landing zone implementations for Bicep and Terraform, and its Terraform guidance describes design considerations for using modules to deploy the platform and vend subscriptions. Choose the tool your platform team already uses for infrastructure as code; mixing tools for the same layer creates drift.</p>
+<p>Whichever route you take, decide two things before deploying: your IP address plan for hubs and spokes, and your naming convention for management groups and subscriptions. Both are painful to change once workloads depend on them.</p>

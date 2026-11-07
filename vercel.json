@@ -2,12 +2,6 @@
   "buildCommand": "sh scripts/preflight.sh",
   "outputDirectory": "public",
   "cleanUrls": false,
-  "rewrites": [
-    {
-      "source": "/cybersecurity/zero-trust-aws-replace-vpn/",
-      "destination": "/article-template.html"
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",

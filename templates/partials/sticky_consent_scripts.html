@@ -1,0 +1,25 @@
+  <!-- AdSense Slot: Sticky Bottom (mobile only · 320x50 · fixed, no CLS) -->
+  <div class="ad-sticky" id="adSticky" hidden>
+    <button class="ad-sticky-close" type="button" aria-label="Close advertisement">×</button>
+    <div class="ad-slot ad-slot--sticky" data-ad-key="sticky" data-ad-format="horizontal"></div>
+  </div>
+
+  <!-- ===================== CONSENT BANNER ===================== -->
+  <div class="consent" id="consentBanner" role="dialog" aria-modal="false" aria-labelledby="consent-title" hidden>
+    <h2 id="consent-title">Your privacy choices</h2>
+    <p>We use cookies to keep the site working and, with your permission, to measure traffic and show ads — including personalized ads from Google and its partners. You can change this anytime via “Cookie settings”. <a href="/privacy.html#cookies">Learn more</a>.</p>
+    <div class="consent-prefs" id="consentPrefs" hidden>
+      <label class="toggle-row"><span>Strictly necessary<small>Theme, consent choice, security. Always on.</small></span><input type="checkbox" checked disabled></label>
+      <label class="toggle-row"><span>Analytics<small>Anonymous traffic measurement.</small></span><input type="checkbox" id="c-analytics"></label>
+      <label class="toggle-row"><span>Advertising<small>Store ad cookies to serve and measure ads.</small></span><input type="checkbox" id="c-ads"></label>
+      <label class="toggle-row"><span>Ad personalization<small>Tailor ads to your interests across sites.</small></span><input type="checkbox" id="c-personalization"></label>
+    </div>
+    <div class="consent-actions">
+      <button class="btn btn--ghost" type="button" data-consent="reject">Reject non-essential</button>
+      <button class="btn btn--ghost" type="button" data-consent="customize" id="consentCustomize">Customize</button>
+      <button class="btn" type="button" data-consent="accept">Accept all</button>
+    </div>
+  </div>
+
+  <script src="/adsense-config.js" defer></script>
+  <script src="/site.js" defer></script>

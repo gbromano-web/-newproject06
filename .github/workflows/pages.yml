@@ -40,9 +40,6 @@ jobs:
           BASE: ${{ steps.pages.outputs.base_path }}
         run: |
           mkdir -p _site && cp -R public/. _site/
-          # Pages has no rewrites: give the article its canonical URL (matches netlify.toml / vercel.json)
-          mkdir -p _site/cybersecurity/zero-trust-aws-replace-vpn
-          cp public/article-template.html _site/cybersecurity/zero-trust-aws-replace-vpn/index.html
           if [ -n "$BASE" ]; then
             find _site -type f \( -name '*.html' -o -name '*.css' -o -name '*.js' \) -print0 |
               xargs -0 sed -i \

@@ -1,0 +1,110 @@
+<!--meta
+{
+  "slug": "rag-evaluation-scorecard",
+  "section": "ai",
+  "kind": "Guide",
+  "short_title": "Evaluating RAG pipelines",
+  "title": "Evaluating RAG pipelines for internal knowledge bases: a practical scorecard",
+  "description": "How to evaluate a retrieval-augmented generation assistant before employees rely on it: building a test set, measuring retrieval and faithfulness, permission-aware retrieval, freshness, and a scorecard to track releases.",
+  "dek": "An internal assistant loses trust the first time it confidently cites the wrong policy. Here is how to measure what matters — whether it finds the right documents, sticks to them, respects permissions and stays current — before you launch and after every change.",
+  "cover_label": "RAG evaluation",
+  "keywords": ["rag", "retrieval augmented generation", "llm evaluation", "ragas", "faithfulness", "context precision", "knowledge base", "ai"],
+  "published": "2026-11-07",
+  "versions": [{"v": "1.0", "date": "2026-11-07", "note": "First published."}],
+  "changelog_summary": "Retrieval precision, groundedness, permissions and freshness: how to score an internal assistant before employees stop trusting it.",
+  "takeaways": [
+    "Evaluate retrieval and generation separately: most bad answers start with the wrong documents.",
+    "Build a test set from real questions, with the expected answer and the source document for each.",
+    "Faithfulness measures whether claims in an answer are supported by the retrieved context.",
+    "Test permissions explicitly: an assistant must never retrieve documents the user couldn't open.",
+    "Run the same scorecard on every change to prompts, models, chunking or the index, and compare releases."
+  ],
+  "sources": [
+    {"title": "Ragas: Automated Evaluation of Retrieval Augmented Generation (arXiv paper)", "url": "https://arxiv.org/abs/2309.15217"},
+    {"title": "Faithfulness metric (Ragas documentation)", "url": "https://docs.ragas.io/en/latest/concepts/metrics/available_metrics/faithfulness/"},
+    {"title": "RAG evaluation metrics (NVIDIA NeMo documentation)", "url": "https://docs.nvidia.com/nemo-platform/v0.3.0/documentation/evaluate-models/metrics/rag-metrics"},
+    {"title": "AI Risk Management Framework (NIST)", "url": "https://www.nist.gov/itl/ai-risk-management-framework"},
+    {"title": "OWASP Top 10 for Large Language Model Applications", "url": "https://genai.owasp.org/llm-top-10/"}
+  ]
+}
+-->
+<p>Retrieval-augmented generation, or RAG, is the most common way to build an internal assistant: when someone asks a question, the system searches your documents, passes the most relevant passages to a language model, and asks it to answer using them. Done well, it gives employees answers grounded in your own policies, runbooks and product documentation.</p>
+
+<p>Done badly, it produces fluent answers that cite the wrong version of a policy, or reveal a document the person asking should never have seen. This guide sets out how to evaluate a RAG assistant before launch and after every change, using a scorecard you can track over time.</p>
+
+<h2 id="two-halves">Evaluate the two halves separately</h2>
+<p>A RAG system has two stages that fail in different ways:</p>
+<ul>
+  <li><strong>Retrieval</strong> finds the passages to give the model. If it returns the wrong documents, or misses the right one, no model can produce a correct grounded answer.</li>
+  <li><strong>Generation</strong> writes the answer from those passages. Even with perfect context, the model can ignore it, overstate it, or fill gaps with plausible inventions.</li>
+</ul>
+<p>Measuring only the final answer hides which stage failed. When you score retrieval and generation separately, a drop in quality points straight to where to look: the index, the chunking and the search settings, or the prompt and the model.</p>
+
+<h2 id="test-set">Build a test set from real questions</h2>
+<p>Evaluation is only as good as the questions you test with. Build a set of a few hundred questions, and keep growing it:</p>
+<ul>
+  <li><strong>Source questions from reality:</strong> help desk tickets, internal chat channels, search logs from your intranet. Real questions are messier and more useful than invented ones.</li>
+  <li><strong>For each question, record the expected answer and the source document</strong> (or documents) that contain it. The source is what lets you measure retrieval.</li>
+  <li><strong>Include questions that should not be answered:</strong> questions with no answer in your documents, and questions about restricted documents asked by users without access. The right behaviour is to say so.</li>
+  <li><strong>Cover each content area</strong> roughly in proportion to how often people ask about it, plus extra cases for high-risk areas such as HR, security and finance policies.</li>
+</ul>
+<p>Subject-matter owners should check the expected answers. A test set with wrong answers will reward a system for being wrong.</p>
+
+<h2 id="retrieval-metrics">Measuring retrieval</h2>
+<p>With known source documents for each question, retrieval quality is measurable without any model judgement:</p>
+<ul>
+  <li><strong>Hit rate at k:</strong> how often at least one correct source appears in the top <em>k</em> retrieved passages. If the right document isn't there, the answer can't be grounded.</li>
+  <li><strong>Context precision:</strong> how much of what was retrieved is relevant, and whether relevant passages are ranked above irrelevant ones. Low precision means the model has to work through noise.</li>
+  <li><strong>Context recall:</strong> how much of the information needed for the expected answer is present in the retrieved context.</li>
+</ul>
+<p>Context precision and recall are among the metrics popularised by the open-source Ragas framework, which estimates them using a language model as a judge when you don't have passage-level labels.</p>
+<p>When retrieval scores are poor, look first at chunking (passages split mid-thought, or too large to rank well), at whether search combines keyword and semantic matching, and at whether stale duplicates of a document compete with the current version.</p>
+
+<h2 id="generation-metrics">Measuring generation</h2>
+<h3>Faithfulness</h3>
+<p>Faithfulness measures whether an answer sticks to its sources. Ragas defines it as the number of claims in the response supported by the retrieved context, divided by the total number of claims in the response, giving a score from 0 to 1. A low score means the model is adding information the documents don't contain, which is exactly the failure that erodes trust.</p>
+<h3>Answer relevance and correctness</h3>
+<p>Relevance asks whether the answer addresses the question. Correctness compares it with the expected answer in your test set. An answer can be perfectly faithful to the retrieved context and still wrong, because retrieval returned an outdated document; that is why correctness and retrieval metrics have to be read together.</p>
+<h3>Using a model as a judge</h3>
+<p>Most generation metrics use a language model to judge another model's output. That scales, but judges make mistakes and have biases of their own. Calibrate them: have people score a sample of a hundred or so answers, compare with the automated scores, and keep spot-checking a sample at every release.</p>
+
+<h2 id="permissions">Permissions: the test that can't fail</h2>
+<p>An internal assistant usually indexes documents with very different audiences: company-wide policies, team wikis, HR records, board papers. If retrieval ignores document permissions, the assistant becomes a way around them.</p>
+<ul>
+  <li><strong>Enforce permissions at retrieval time,</strong> filtering results by the identity of the person asking, using the same access rules as the source system.</li>
+  <li><strong>Keep permissions in sync.</strong> When access to a document changes in the source, the index must reflect it quickly.</li>
+  <li><strong>Test it directly:</strong> for every restricted document in your test set, ask about it as a user without access and confirm it is never retrieved or quoted.</li>
+</ul>
+<p>Treat any failure here as a release blocker, not a score to improve. The <a href="https://genai.owasp.org/llm-top-10/" rel="noopener" target="_blank">OWASP Top 10 for LLM applications</a> lists sensitive information disclosure among the main risks for these systems.</p>
+
+<h2 id="freshness">Freshness</h2>
+<p>Internal documents change constantly. An assistant that answers from last quarter's travel policy is worse than no assistant, because it sounds authoritative.</p>
+<ul>
+  <li><strong>Measure indexing lag:</strong> the time between a document changing in the source and the change being searchable.</li>
+  <li><strong>Remove superseded versions</strong> from the index, or rank them clearly below the current version.</li>
+  <li><strong>Add "changed recently" questions</strong> to your test set whenever an important policy is updated, with the new answer as the expected one.</li>
+  <li><strong>Show sources and their dates</strong> in every answer, so employees can check what the assistant relied on.</li>
+</ul>
+
+<h2 id="scorecard">The scorecard</h2>
+<p>Bring the measures together in one table and run it on every change: a new model, a prompt edit, a chunking change or a re-index. The thresholds below are starting points we suggest, not industry standards; set your own based on the risk of each content area.</p>
+<div class="table-wrap">
+  <table>
+    <caption class="sr-only">RAG evaluation scorecard</caption>
+    <thead><tr><th scope="col">Area</th><th scope="col">Measure</th><th scope="col">Suggested starting bar</th></tr></thead>
+    <tbody>
+      <tr><td>Retrieval</td><td>Hit rate in the top 5 passages</td><td>Track the trend; investigate any drop</td></tr>
+      <tr><td>Retrieval</td><td>Context precision and recall</td><td>Compare against the previous release</td></tr>
+      <tr><td>Generation</td><td>Faithfulness</td><td>High, with every unsupported claim on a high-risk topic reviewed</td></tr>
+      <tr><td>Generation</td><td>Correctness against expected answers</td><td>Agreed with content owners per area</td></tr>
+      <tr><td>Abstention</td><td>Says "I don't know" when the answer isn't in the documents</td><td>Measured on unanswerable questions</td></tr>
+      <tr><td>Permissions</td><td>Restricted documents retrieved for unauthorised users</td><td>Zero. Any failure blocks release</td></tr>
+      <tr><td>Freshness</td><td>Indexing lag; questions on recently changed documents</td><td>Agreed service level, for example within a day</td></tr>
+      <tr><td>Operations</td><td>Latency and cost per answer</td><td>Within budget at expected volume</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2 id="after-launch">After launch</h2>
+<p>Offline tests catch regressions; production feedback finds the gaps your test set missed. Collect thumbs-up and thumbs-down ratings with an optional comment, review the negative ones weekly, and turn the instructive ones into new test cases. Over time, the test set becomes a record of everything the assistant has got wrong, which is exactly what you want to keep testing against.</p>
+<p>For governance, map the scorecard to your organisation's risk process. NIST's <a href="https://www.nist.gov/itl/ai-risk-management-framework" rel="noopener" target="_blank">AI Risk Management Framework</a> is a useful structure for documenting what you measure, who owns each risk and how often it is reviewed.</p>

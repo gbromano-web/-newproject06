@@ -11,16 +11,16 @@
 
   /* ---------- Search index (replace with a generated JSON file as the site grows) ---------- */
   var ARTICLES = [
-    { t: 'The real cost of multi-cloud in 2026: egress, identity sprawl, and the ops tax', c: 'Cloud architecture', k: 'multi-cloud egress finops cost aws azure gcp', u: '/article-template.html' },
-    { t: 'Zero Trust on AWS: replacing your VPN with identity-aware access', c: 'Cybersecurity', k: 'zero trust verified access vpn identity cedar device posture', u: '/article-template.html' },
-    { t: 'Platform engineering vs. DevOps: what internal developer platforms actually change', c: 'DevOps', k: 'platform engineering idp golden path backstage portal', u: '/article-template.html' },
-    { t: 'Kubernetes cost allocation: building a showback model finance will trust', c: 'Cloud architecture', k: 'kubernetes k8s finops showback chargeback cost', u: '/article-template.html' },
-    { t: 'Evaluating RAG pipelines for internal knowledge bases: a practical scorecard', c: 'AI workflows', k: 'rag llm retrieval evaluation groundedness ai', u: '/article-template.html' },
-    { t: 'SSO tax, SCIM, and audit logs: the SaaS procurement checklist for security teams', c: 'SaaS tools', k: 'saas sso scim audit logs procurement identity', u: '/article-template.html' },
-    { t: 'Passkeys in the enterprise: rollout lessons for workforce identity', c: 'Cybersecurity', k: 'passkeys fido2 webauthn mfa identity', u: '/article-template.html' },
-    { t: 'Terraform state at scale: remote backends, locking, and drift detection', c: 'DevOps', k: 'terraform iac state drift opentofu', u: '/article-template.html' },
-    { t: 'Azure landing zones explained: management groups, policy, and subscription vending', c: 'Cloud architecture', k: 'azure landing zone management groups policy governance', u: '/article-template.html' },
-    { t: 'Agentic workflows in ITSM: where automation helps and where it needs a human', c: 'AI workflows', k: 'agents itsm automation servicenow ai ticket triage', u: '/article-template.html' }
+    {"t": "The real cost of multi-cloud: egress, identity sprawl, and the ops tax nobody budgets for", "c": "Cloud architecture", "k": "multi-cloud egress data transfer finops aws azure google cloud cloud cost", "u": "/cloud-architecture/multi-cloud-cost-egress-identity/"},
+    {"t": "Terraform state at scale: remote backends, locking, and drift detection", "c": "DevOps", "k": "terraform infrastructure as code iac state s3 backend state locking use_lockfile drift detection", "u": "/devops/terraform-state-at-scale/"},
+    {"t": "SSO tax, SCIM, and audit logs: the SaaS procurement checklist for security teams", "c": "SaaS tools", "k": "saas sso sso tax scim audit logs procurement vendor security soc 2 identity", "u": "/saas-tools/saas-security-procurement-checklist/"},
+    {"t": "Platform engineering vs. DevOps: what internal developer platforms actually change", "c": "DevOps", "k": "platform engineering devops internal developer platform golden path developer portal backstage cncf team topologies", "u": "/devops/platform-engineering-vs-devops/"},
+    {"t": "Passkeys in the enterprise: rollout lessons for workforce identity", "c": "Cybersecurity", "k": "passkeys fido2 webauthn phishing-resistant mfa identity nist 800-63b entra id device-bound", "u": "/cybersecurity/passkeys-enterprise-rollout/"},
+    {"t": "Kubernetes cost allocation: building a showback model finance will trust", "c": "Cloud architecture", "k": "kubernetes k8s finops showback chargeback opencost cost allocation idle cost", "u": "/cloud-architecture/kubernetes-cost-allocation-showback/"},
+    {"t": "Evaluating RAG pipelines for internal knowledge bases: a practical scorecard", "c": "AI workflows", "k": "rag retrieval augmented generation llm evaluation ragas faithfulness context precision knowledge base ai", "u": "/ai-workflows/rag-evaluation-scorecard/"},
+    {"t": "Azure landing zones explained: management groups, policy, and subscription vending", "c": "Cloud architecture", "k": "azure landing zone management groups azure policy subscription vending cloud adoption framework governance", "u": "/cloud-architecture/azure-landing-zones-explained/"},
+    {"t": "Agentic workflows in ITSM: where automation helps and where it needs a human", "c": "AI workflows", "k": "ai agents agentic ai itsm service desk change management itil automation runbooks", "u": "/ai-workflows/agentic-workflows-itsm/"},
+    {"t": "Zero Trust on AWS: replacing your VPN with identity-aware access", "c": "Cybersecurity", "k": "zero trust aws verified access vpn replacement identity-aware access device posture cedar policy", "u": "/cybersecurity/zero-trust-aws-replace-vpn/"}
   ];
 
   var CATS = { cloud: 'Cloud architecture', security: 'Cybersecurity', saas: 'SaaS tools', devops: 'DevOps', ai: 'AI workflows' };
@@ -289,36 +289,25 @@
     });
   }
 
-  /* ---------- Shared form submission ---------- */
+  /* ---------- Forms: open the visitor's email app ----------
+     The site is static (GitHub Pages), so there is no form backend. Forms validate input, then open
+     a pre-filled email addressed to the team. Nothing is sent to any server by the site itself —
+     a mailto: link is handled entirely by the visitor's own device. To collect submissions
+     automatically later, point the forms at Formspree / Buttondown and restore a POST handler. */
+  var CONTACT_EMAIL = 'gbromano.5bdf@gmail.com';
   var EMAIL_RE = /^[^\s@]{1,64}@[^\s@]{1,253}\.[^\s@]{2,}$/;
-  var SUBMIT_TIMEOUT_MS = 10000;
 
-  // AUDIT FIX: POST bodies only (never PII in URLs), hard timeout, honeypot, and one retry-safe path.
-  // Works out of the box on Netlify Forms (data-netlify). On other hosts, set the form's
-  // action to your Formspree / Basin / serverless endpoint.
-  function postForm(formEl) {
-    var hp = formEl.querySelector('[data-honeypot]');
-    if (hp && hp.value) return Promise.resolve({ ok: true, bot: true }); // silently drop bots
-    var ctrl = 'AbortController' in window ? new AbortController() : null;
-    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, SUBMIT_TIMEOUT_MS) : null;
-    return fetch(formEl.getAttribute('action') || '/', {
-      method: 'POST',
-      headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(new FormData(formEl)).toString(),
-      signal: ctrl ? ctrl.signal : undefined,
-      credentials: 'same-origin'
-    }).then(function (r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r;
-    }).finally(function () { if (timer) clearTimeout(timer); });
+  function openMail(subject, body) {
+    var url = 'mailto:' + CONTACT_EMAIL + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    window.location.href = url;
   }
 
-  function showStatus(el, ok, okText) {
+  function showStatus(el, ok, text) {
     el.className = 'form-status ' + (ok ? 'form-status--ok' : 'form-status--err');
-    if (ok) el.textContent = okText;
-    else el.innerHTML = 'We couldn’t send this right now. Please email us directly at <a href="mailto:support@techstacklab.com">support@techstacklab.com</a>.';
+    el.innerHTML = text;
     el.hidden = false;
   }
+  var FALLBACK = 'If nothing opened, email us directly at <a href="mailto:' + CONTACT_EMAIL + '">' + CONTACT_EMAIL + '</a>.';
 
   /* ---------- Contact form ---------- */
   var form = $('#contactForm');
@@ -331,34 +320,22 @@
       var allowed = Array.prototype.map.call(f.topic.options, function (o) { return o.value; });
       if (allowed.indexOf(topic) !== -1) f.topic.value = topic;
     }
-
     var setErr = function (name, msg) { var el = $('[data-error-for="' + name + '"]', form); if (el) el.textContent = msg || ''; };
-    var busy = false;
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      if (busy) return; // AUDIT FIX: block double submits
       var ok = true;
       var name = f.name.value.trim(), email = f.email.value.trim(), msg = f.message.value.trim();
       ['name', 'email', 'message', 'consent'].forEach(function (n) { setErr(n, ''); });
-      if (!name || name.length > 100) { setErr('name', 'Please enter your name (up to 100 characters).'); ok = false; }
-      if (!EMAIL_RE.test(email) || email.length > 254) { setErr('email', 'Please enter a valid email address.'); ok = false; }
-      if (msg.length < 20 || msg.length > 5000) { setErr('message', 'Please write between 20 and 5,000 characters.'); ok = false; }
-      if (!f.consent.checked) { setErr('consent', 'Please confirm you have read the Privacy Policy.'); ok = false; }
+      if (!name || name.length > 100) { setErr('name', 'Enter your name (up to 100 characters).'); ok = false; }
+      if (!EMAIL_RE.test(email) || email.length > 254) { setErr('email', 'Enter a valid email address.'); ok = false; }
+      if (msg.length < 20 || msg.length > 5000) { setErr('message', 'Write between 20 and 5,000 characters.'); ok = false; }
+      if (!f.consent.checked) { setErr('consent', 'Confirm you have read the Privacy Policy.'); ok = false; }
       if (!ok) return;
-
-      busy = true;
-      var btn = form.querySelector('button[type="submit"]');
-      btn.disabled = true; btn.textContent = 'Sending…';
-      postForm(form).then(function () {
-        showStatus(status, true, 'Thanks — your message has been sent. We reply to most messages within two business days.');
-        form.reset();
-      }).catch(function (err) {
-        if (window.console) console.error('[contact] submit failed:', err && err.name === 'AbortError' ? 'timeout' : err);
-        showStatus(status, false);
-      }).finally(function () {
-        busy = false; btn.disabled = false; btn.textContent = 'Send message';
-      });
+      var topicLabel = f.topic.options[f.topic.selectedIndex].text;
+      openMail('[TechStack Lab] ' + topicLabel + ' — ' + name,
+        msg + '\n\n—\nFrom: ' + name + ' <' + email + '>\nTopic: ' + topicLabel + '\nPage: ' + location.href);
+      showStatus(status, true, 'Your email app should now be open with your message ready to send. Press send to deliver it. ' + FALLBACK);
     });
   }
 
@@ -366,24 +343,12 @@
   var nl = $('#newsletterForm');
   if (nl) {
     var nlStatus = $('#newsletterStatus');
-    var nlBusy = false;
     nl.addEventListener('submit', function (e) {
       e.preventDefault();
-      if (nlBusy) return;
       var email = nl.elements.email.value.trim();
-      if (!EMAIL_RE.test(email) || email.length > 254) {
-        nlStatus.className = 'form-status form-status--err'; nlStatus.textContent = 'Please enter a valid email address.'; nlStatus.hidden = false; return;
-      }
-      nlBusy = true;
-      var btn = nl.querySelector('button[type="submit"]');
-      btn.disabled = true;
-      postForm(nl).then(function () {
-        showStatus(nlStatus, true, 'Thanks — you’re on the list. You can unsubscribe from any issue.');
-        nl.reset();
-      }).catch(function (err) {
-        if (window.console) console.error('[newsletter] submit failed:', err);
-        showStatus(nlStatus, false);
-      }).finally(function () { nlBusy = false; btn.disabled = false; });
+      if (!EMAIL_RE.test(email) || email.length > 254) { showStatus(nlStatus, false, 'Enter a valid email address.'); return; }
+      openMail('Subscribe: The Weekly Stack', 'Please add ' + email + ' to The Weekly Stack.\n\nI understand I can unsubscribe at any time by replying to any issue.');
+      showStatus(nlStatus, true, 'Your email app should now be open with a subscribe request. Press send to confirm. ' + FALLBACK);
     });
   }
 

@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://techstacklab.site/</loc><lastmod>2026-10-29</lastmod></url>
-  <url><loc>https://techstacklab.site/cybersecurity/zero-trust-aws-replace-vpn/</loc><lastmod>2026-10-29</lastmod></url>
-  <url><loc>https://techstacklab.site/about.html</loc><lastmod>2026-10-29</lastmod></url>
-  <url><loc>https://techstacklab.site/contact.html</loc><lastmod>2026-10-29</lastmod></url>
-  <url><loc>https://techstacklab.site/privacy.html</loc><lastmod>2026-10-29</lastmod></url>
-  <url><loc>https://techstacklab.site/terms.html</loc><lastmod>2026-10-29</lastmod></url>
+  <url><loc>https://techstacklab.site/</loc><lastmod>2026-11-07</lastmod></url>
+  <url><loc>https://techstacklab.site/cloud-architecture/multi-cloud-cost-egress-identity/</loc><lastmod>2026-11-07</lastmod></url>
+  <url><loc>https://techstacklab.site/devops/terraform-state-at-scale/</loc><lastmod>2026-11-07</lastmod></url>
+  <url><loc>https://techstacklab.site/saas-tools/saas-security-procurement-checklist/</loc><lastmod>2026-11-07</lastmod></url>
+  <url><loc>https://techstacklab.site/devops/platform-engineering-vs-devops/</loc><lastmod>2026-11-07</lastmod></url>
+  <url><loc>https://techstacklab.site/cybersecurity/passkeys-enterprise-rollout/</loc><lastmod>2026-11-07</lastmod></url>
+  <url><loc>https://techstacklab.site/cloud-architecture/kubernetes-cost-allocation-showback/</loc><lastmod>2026-11-07</lastmod></url>
+  <url><loc>https://techstacklab.site/ai-workflows/rag-evaluation-scorecard/</loc><lastmod>2026-11-07</lastmod></url>
+  <url><loc>https://techstacklab.site/cloud-architecture/azure-landing-zones-explained/</loc><lastmod>2026-11-07</lastmod></url>
+  <url><loc>https://techstacklab.site/ai-workflows/agentic-workflows-itsm/</loc><lastmod>2026-11-07</lastmod></url>
+  <url><loc>https://techstacklab.site/cybersecurity/zero-trust-aws-replace-vpn/</loc><lastmod>2026-11-06</lastmod></url>
+  <url><loc>https://techstacklab.site/about.html</loc><lastmod>2026-11-07</lastmod></url>
+  <url><loc>https://techstacklab.site/contact.html</loc><lastmod>2026-11-07</lastmod></url>
+  <url><loc>https://techstacklab.site/privacy.html</loc><lastmod>2026-11-07</lastmod></url>
+  <url><loc>https://techstacklab.site/terms.html</loc><lastmod>2026-11-07</lastmod></url>
 </urlset>

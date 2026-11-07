@@ -1,0 +1,149 @@
+<!--meta
+{
+  "slug": "multi-cloud-cost-egress-identity",
+  "section": "cloud",
+  "kind": "Analysis",
+  "short_title": "The real cost of multi-cloud",
+  "title": "The real cost of multi-cloud: egress, identity sprawl, and the ops tax nobody budgets for",
+  "description": "A cost model for running workloads across AWS, Azure and Google Cloud: data transfer, duplicated security tooling, fragmented commitment discounts and the people needed to run more than one control plane.",
+  "dek": "Multi-cloud is often sold as leverage against lock-in. The bill tends to arrive as data transfer fees, duplicated tooling, weaker volume discounts and the headcount it takes to run several control planes. Here is how to model it before you commit.",
+  "cover_label": "Multi-cloud cost model",
+  "keywords": ["multi-cloud", "egress", "data transfer", "FinOps", "AWS", "Azure", "Google Cloud", "cloud cost"],
+  "published": "2026-11-07",
+  "featured": true,
+  "start_here": true,
+  "versions": [{"v": "1.0", "date": "2026-11-07", "note": "First published."}],
+  "changelog_summary": "A cost model for egress, duplicated security tooling, fragmented discounts and the people needed to run several control planes.",
+  "takeaways": [
+    "Exit waivers announced by AWS, Google and Microsoft in 2024 cover leaving a cloud, not ongoing traffic between clouds.",
+    "Model data transfer per flow: where it starts, where it ends, and every metered hop (NAT, inter-region, internet) in between.",
+    "Count the duplicated platform: identity, logging, security posture and networking each need an owner per cloud.",
+    "Splitting spend weakens commitment discounts and negotiating leverage; include that lost discount in the model.",
+    "A primary cloud with named, justified exceptions is usually cheaper than an even split."
+  ],
+  "sources": [
+    {"title": "AWS price reduction for data transfer out to the internet (AWS, 2021)", "url": "https://aws.amazon.com/about-aws/whats-new/2021/11/aws-price-reduction-data-transfers-internet"},
+    {"title": "Amazon EC2 on-demand pricing: data transfer section (AWS)", "url": "https://aws.amazon.com/ec2/pricing/on-demand/"},
+    {"title": "AWS cross-region data transfer rates, verified against the AWS price list (egresscost.com)", "url": "https://egresscost.com/aws/cross-region-data-transfer"},
+    {"title": "Microsoft ends Azure egress fees for customers leaving (The Register, March 2024)", "url": "https://www.theregister.com/2024/03/13/microsoft_ends_azure_egress_fees/"},
+    {"title": "FOCUS: the FinOps Open Cost and Usage Specification (FinOps Foundation)", "url": "https://focus.finops.org/"}
+  ]
+}
+-->
+<p>"Multi-cloud" covers two very different situations. In one, a company runs most workloads in a single cloud and uses a second for a specific reason: a data platform it prefers, a customer contract, or an acquisition that arrived with its own estate. In the other, a company deliberately spreads similar workloads across two or three providers to avoid depending on any one of them.</p>
+
+<p>The first is common and usually sensible. The second is where costs tend to surprise people, because the expensive parts are not on any single provider's invoice. This guide sets out a cost model you can fill in with your own numbers before you commit, and the questions that decide whether multi-cloud is worth it.</p>
+
+<h2 id="where-the-money-goes">Where the money actually goes</h2>
+<p>Compute and storage prices are broadly comparable across the large providers, so a multi-cloud business case rarely fails on unit prices. It fails on five costs that sit between the clouds or on top of them:</p>
+<ul>
+  <li><strong>Data transfer.</strong> Traffic that leaves a provider's network, crosses regions, or passes through metered network services is charged per gigabyte.</li>
+  <li><strong>Identity and access.</strong> Each cloud has its own identity and permission model, which has to be designed, federated and audited separately.</li>
+  <li><strong>Duplicated platform tooling.</strong> Logging, security posture management, network controls, secrets and policy all need a working implementation in every cloud you run.</li>
+  <li><strong>Fragmented discounts.</strong> Committed-use discounts and enterprise agreements reward concentrated spend. Splitting it reduces both.</li>
+  <li><strong>People.</strong> Each additional control plane needs engineers who know it well enough to operate it during an incident.</li>
+</ul>
+
+<h2 id="data-transfer">Data transfer: model it per flow</h2>
+<p>Egress is the most visible of the five, and the easiest to underestimate. The mistake is to look up a single "egress price" and multiply it by an estimate of total traffic. Real costs depend on the path each flow takes, and a single request can be metered more than once.</p>
+
+<p>Taking AWS as the example, because its price list is public and widely tracked:</p>
+<ul>
+  <li>Data transfer out to the internet is free for the first 100 GB a month, a free tier AWS introduced in 2021 for all regions except China and GovCloud.</li>
+  <li>Beyond that, internet egress from US regions starts at around $0.09 per GB, with lower rates at higher volume tiers.</li>
+  <li>Transfer between AWS regions is typically around $0.02 per GB from US East (N. Virginia), with exceptions for some region pairs.</li>
+  <li>Traffic leaving private subnets through a NAT gateway also incurs a data processing charge, around $0.045 per GB.</li>
+</ul>
+<p>Those figures come from the AWS price list as tracked in late 2026; check the <a href="https://aws.amazon.com/ec2/pricing/on-demand/" rel="noopener" target="_blank">official pricing page</a> for your regions before you rely on them. Azure and Google Cloud price comparable flows differently, but the principle is the same: every hop that crosses a metered boundary is charged.</p>
+
+<h3>A worked example</h3>
+<p>Suppose an analytics pipeline in Google Cloud reads 50 TB a month from application databases running in private subnets in AWS. Using the first-tier rates above as an upper bound:</p>
+<div class="table-wrap">
+  <table>
+    <caption class="sr-only">Monthly data transfer cost for a 50 TB cross-cloud flow</caption>
+    <thead><tr><th scope="col">Metered hop</th><th scope="col">Rate used</th><th scope="col">50 TB a month</th></tr></thead>
+    <tbody>
+      <tr><td>NAT gateway processing (private subnet to internet)</td><td>$0.045 per GB</td><td>$2,250</td></tr>
+      <tr><td>Data transfer out to the internet</td><td>$0.09 per GB (first tier)</td><td>up to $4,500</td></tr>
+      <tr><td><strong>Total, before any ingress-side charges</strong></td><td></td><td><strong>up to $6,750</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+<p>That is roughly $81,000 a year for one flow, before you add the dedicated interconnects, firewalls or private endpoints the security team will ask for. Higher volume tiers lower the internet portion, and a private interconnect can lower the per-GB rate further, but interconnects add port and partner fees of their own. Either way, the number belongs in the business case from day one, not after the first invoice.</p>
+
+<div class="callout">
+  <strong>The 2024 exit waivers don't cover multi-cloud traffic.</strong>
+  In early 2024 Google, AWS and Microsoft each announced that customers moving their data out to another provider could do so without egress charges. The conditions differ — Google and Microsoft tied the waiver to closing the account or cancelling subscriptions — but none of them apply to traffic that flows between clouds as part of normal operation.
+</div>
+
+<h3>How to reduce it</h3>
+<ul>
+  <li><strong>Move the compute to the data,</strong> not the other way round. If analytics must run in another cloud, replicate a reduced, aggregated dataset rather than streaming raw records.</li>
+  <li><strong>Remove unnecessary NAT hops</strong> with private endpoints for the provider's own services, so traffic to object storage or managed databases never touches a NAT gateway.</li>
+  <li><strong>Compress and batch</strong> cross-cloud transfers. Per-GB pricing rewards fewer, smaller payloads.</li>
+  <li><strong>Tag every cross-cloud flow</strong> with an owner, so the cost appears in a team's showback report rather than a shared networking line.</li>
+</ul>
+
+<h2 id="identity-sprawl">Identity sprawl</h2>
+<p>AWS IAM, Microsoft Entra ID with Azure role-based access control, and Google Cloud IAM are all capable systems, but they model permissions differently. Policies, role inheritance, service identities and audit logs do not translate one-to-one. Running more than one of them means:</p>
+<ul>
+  <li><strong>Federation design for people.</strong> A single workforce identity provider should sign people into every cloud, with groups mapped to roles in each. That mapping has to be maintained as teams change.</li>
+  <li><strong>Workload identity across clouds.</strong> Services in one cloud calling APIs in another need short-lived, federated credentials rather than long-lived keys. Each provider supports this, but each configures it differently.</li>
+  <li><strong>Separate access reviews.</strong> Auditors will ask who can do what in each cloud. Without a single inventory, that answer takes weeks.</li>
+</ul>
+<p>The direct cost here is engineering time. The indirect cost is risk: permission models that only one or two people understand are where excessive access accumulates.</p>
+
+<h2 id="duplicated-tooling">Duplicated platform tooling</h2>
+<p>A platform team running one cloud builds a set of shared capabilities once: landing zones, network topology, logging pipelines, security posture monitoring, secrets management, policy enforcement and cost reporting. In a second cloud, every one of these needs either a second native implementation or a third-party tool that spans both.</p>
+<p>Cross-cloud tools reduce duplication, but they are rarely free and they lag the newest native features. Native tools are deeply integrated but double the work. Either way, list each capability and decide explicitly:</p>
+<div class="table-wrap">
+  <table>
+    <caption class="sr-only">Platform capabilities to plan for in each cloud</caption>
+    <thead><tr><th scope="col">Capability</th><th scope="col">Question to answer</th><th scope="col">Typical cost driver</th></tr></thead>
+    <tbody>
+      <tr><td>Logging and SIEM</td><td>Do logs from every cloud reach one SIEM?</td><td>Ingest volume and per-GB SIEM licensing</td></tr>
+      <tr><td>Security posture</td><td>One posture tool across clouds, or native tools in each?</td><td>Per-resource or per-workload licensing</td></tr>
+      <tr><td>Network</td><td>How do clouds connect, and who owns routing and firewall rules?</td><td>Interconnect ports, firewall appliances</td></tr>
+      <tr><td>Policy and guardrails</td><td>Are the same rules enforced the same way everywhere?</td><td>Engineering time to write and test policies twice</td></tr>
+      <tr><td>Cost reporting</td><td>Can finance see all clouds in one report?</td><td>Normalising billing data across providers</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>For the last row, the FinOps Foundation's <a href="https://focus.finops.org/" rel="noopener" target="_blank">FOCUS specification</a> defines a common format for cloud billing data. Where your providers export it, building one cost report across clouds becomes much less work.</p>
+
+<h2 id="discounts">Fragmented discounts and lost leverage</h2>
+<p>Every large provider rewards commitment: savings plans and reserved capacity at AWS, reservations and savings plans at Azure, committed use discounts at Google Cloud, plus negotiated enterprise agreements on top. These discounts are usually the single largest lever on a cloud bill.</p>
+<p>Splitting a fixed amount of spend between providers has two effects. Each commitment is smaller, so you may land in a lower discount tier or be unable to commit at all for spiky workloads. And your position in contract negotiations weakens, because each provider sees a smaller account.</p>
+<p>To include this in the model, estimate the effective discount you would get with all eligible spend in one provider, then the discount you would get with spend split. The difference, multiplied by the spend, is a real annual cost of the multi-cloud decision.</p>
+
+<h2 id="people">The people cost</h2>
+<p>The hardest number to estimate is often the largest. Someone has to be on call for each cloud, keep up with its changes, and be able to diagnose its failure modes at 3 a.m. Depth matters more than breadth here: an engineer who knows two clouds superficially is not a substitute for one who knows a single cloud thoroughly.</p>
+<p>A practical way to estimate it is to ask your platform team which roles they would need to add, not which skills they would need to learn. If running a second cloud properly means a second networking specialist and a second security engineer, those salaries belong in the model.</p>
+
+<h2 id="cost-model">A cost model you can fill in</h2>
+<p>Use this as a template. Estimate each line for a single-cloud baseline and for the multi-cloud design, then compare the totals.</p>
+<div class="table-wrap">
+  <table>
+    <caption class="sr-only">Annual multi-cloud cost model template</caption>
+    <thead><tr><th scope="col">Line</th><th scope="col">How to estimate it</th></tr></thead>
+    <tbody>
+      <tr><td>Cross-cloud data transfer</td><td>For each flow: GB a month × every metered hop on its path × 12</td></tr>
+      <tr><td>Interconnect and network services</td><td>Port, partner and appliance fees for each link between clouds</td></tr>
+      <tr><td>Duplicated tooling</td><td>Licences for tools needed per cloud, or the premium for cross-cloud editions</td></tr>
+      <tr><td>Lost discount</td><td>(Discount rate with concentrated spend − discount rate with split spend) × eligible spend</td></tr>
+      <tr><td>Platform and security headcount</td><td>Fully loaded cost of roles you would add to operate the second cloud</td></tr>
+      <tr><td>Identity and audit effort</td><td>Engineering time to federate, map roles and run access reviews in each cloud</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>Set the total against the benefit you expect. If the benefit is a specific service that is materially better for your use case, it can be quantified. If the benefit is "avoiding lock-in", ask what it would cost to migrate if you ever needed to, and whether paying the multi-cloud premium every year is cheaper than that one-off cost.</p>
+
+<h2 id="when-it-makes-sense">When multi-cloud is worth it</h2>
+<p>Multi-cloud is usually justified when there is a concrete reason that would survive a finance review:</p>
+<ul>
+  <li><strong>A materially better service</strong> for a specific workload, where the advantage outweighs the transfer and duplication costs.</li>
+  <li><strong>Regulatory or customer requirements</strong> that a single provider cannot meet in a given jurisdiction.</li>
+  <li><strong>Acquisitions</strong>, where migrating an acquired estate would cost more, or take longer, than integrating it.</li>
+  <li><strong>Specific resilience requirements</strong> for a small number of critical services, designed and tested as such, rather than a general principle applied to everything.</li>
+</ul>
+<p>For everything else, the pattern that tends to hold up is one primary cloud for most workloads, with each exception named, owned and justified in writing. Revisit the exceptions every year; the reasons that justified them often expire.</p>

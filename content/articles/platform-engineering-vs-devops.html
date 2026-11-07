@@ -1,0 +1,105 @@
+<!--meta
+{
+  "slug": "platform-engineering-vs-devops",
+  "section": "devops",
+  "kind": "Analysis",
+  "short_title": "Platform engineering vs. DevOps",
+  "title": "Platform engineering vs. DevOps: what internal developer platforms actually change",
+  "description": "What platform engineering adds to DevOps, how internal developer platforms and golden paths work, how to judge maturity with the CNCF model, and the organisational questions to settle before buying a developer portal.",
+  "dek": "Platform engineering doesn't replace DevOps; it is one way to make DevOps work at scale. The value comes from treating the platform as a product with real users — and most of the hard decisions are about teams, not tools.",
+  "cover_label": "Platform engineering",
+  "keywords": ["platform engineering", "devops", "internal developer platform", "golden path", "developer portal", "backstage", "cncf", "team topologies"],
+  "published": "2026-11-07",
+  "versions": [{"v": "1.0", "date": "2026-11-07", "note": "First published."}],
+  "changelog_summary": "Golden paths, the CNCF maturity model, and the org chart questions to answer before buying a developer portal.",
+  "takeaways": [
+    "DevOps is a set of practices; platform engineering is a way of providing shared capabilities so teams can follow them without each rebuilding the basics.",
+    "A platform is a product: it needs users, a roadmap, and evidence that teams choose it.",
+    "Golden paths should be the easiest route, not the only route.",
+    "Use the CNCF maturity model's five aspects to find your weakest area before buying tools.",
+    "A developer portal is an interface to a platform; buying one before the platform exists rarely works."
+  ],
+  "sources": [
+    {"title": "CNCF Platforms white paper (CNCF TAG App Delivery)", "url": "https://tag-app-delivery.cncf.io/whitepapers/platforms/"},
+    {"title": "CNCF Platform Engineering Maturity Model", "url": "https://tag-app-delivery.cncf.io/whitepapers/platform-eng-maturity-model/"},
+    {"title": "DORA research programme", "url": "https://dora.dev/"},
+    {"title": "Team Topologies", "url": "https://teamtopologies.com/"},
+    {"title": "Backstage developer portal framework", "url": "https://backstage.io/"}
+  ]
+}
+-->
+<p>Over the past few years, many organisations have renamed an infrastructure or DevOps team to "platform team" and started evaluating developer portals. Sometimes that reflects a real change in how the team works. Often it doesn't, and the portal becomes another tool that few people use.</p>
+
+<p>This guide explains what platform engineering actually adds to DevOps, how to tell where your organisation stands, and the decisions to make before spending money on tooling.</p>
+
+<h2 id="definitions">Two different things, often confused</h2>
+<p><strong>DevOps</strong> is a set of practices and a culture: teams that build software also run it, delivery is automated, and feedback from production shapes what gets built next. It says what good delivery looks like, not how an organisation of hundreds of engineers should provide the tooling to achieve it.</p>
+<p><strong>Platform engineering</strong> is one answer to that "how". The CNCF's platforms white paper describes platforms as curating and presenting common capabilities, frameworks and experiences for internal users, and platform engineering as the practice of planning and providing them. In plain terms: instead of every product team building its own pipelines, infrastructure templates, observability and security checks, a platform team provides those as shared, self-service capabilities.</p>
+<p>So the two aren't alternatives. When product teams each spend a large share of their time on undifferentiated infrastructure work, a platform is how you give that time back without abandoning "you build it, you run it".</p>
+
+<h2 id="what-changes">What an internal developer platform changes</h2>
+<p>An internal developer platform is the collection of self-service capabilities a platform team offers. In practice it usually includes:</p>
+<ul>
+  <li><strong>Environment and infrastructure provisioning,</strong> such as a new service with its database, network access and secrets, from a template rather than a ticket.</li>
+  <li><strong>Delivery pipelines</strong> with build, test, security scanning and deployment built in.</li>
+  <li><strong>Observability by default:</strong> logs, metrics, traces and alerts wired up when a service is created.</li>
+  <li><strong>Guardrails:</strong> policies that are enforced automatically, so compliance doesn't depend on every team remembering every rule.</li>
+  <li><strong>A catalogue</strong> of what exists and who owns it.</li>
+</ul>
+<p>The change for product teams is in the default experience. Without a platform, creating a production-ready service means assembling a dozen tools and filing several tickets. With one, it means choosing a template and getting a working, compliant service that the team then owns and runs.</p>
+
+<h3>Golden paths</h3>
+<p>A golden path, sometimes called a paved road, is a supported, opinionated route for a common task, such as "build and deploy a containerised API". It packages the platform team's recommended tools and practices so that following them is the easiest option.</p>
+<p>The important word is <em>easiest</em>, not <em>only</em>. Teams with unusual needs should be able to step off the path, accepting more responsibility when they do. A golden path that is mandatory and painful turns into a compliance mechanism that teams route around; one that is genuinely the fastest way to ship gets adopted without enforcement.</p>
+
+<h2 id="platform-as-product">Treat the platform as a product</h2>
+<p>The most consistent difference between platforms that work and those that don't is whether the platform team treats internal developers as customers. That means:</p>
+<ul>
+  <li><strong>Talking to users</strong> before building, and measuring what slows them down.</li>
+  <li><strong>A roadmap</strong> driven by those problems, published so teams can plan around it.</li>
+  <li><strong>Documentation and onboarding</strong> good enough that teams can self-serve without a meeting.</li>
+  <li><strong>Measuring adoption,</strong> and treating low adoption as a product problem rather than a communication problem.</li>
+</ul>
+<p>The CNCF maturity model describes the stage where investment in internal platforms resembles investment in external products, with product management and user experience roles, published roadmaps and data guiding funding.</p>
+
+<h2 id="maturity">Where are you? The CNCF maturity model</h2>
+<p>The CNCF's <a href="https://tag-app-delivery.cncf.io/whitepapers/platform-eng-maturity-model/" rel="noopener" target="_blank">Platform Engineering Maturity Model</a> describes four levels — <strong>Provisional</strong>, <strong>Operationalized</strong>, <strong>Scalable</strong> and <strong>Optimizing</strong> — across five aspects:</p>
+<div class="table-wrap">
+  <table>
+    <caption class="sr-only">Aspects of the CNCF Platform Engineering Maturity Model</caption>
+    <thead><tr><th scope="col">Aspect</th><th scope="col">What it asks</th><th scope="col">A question to test yourself</th></tr></thead>
+    <tbody>
+      <tr><td>Investment</td><td>How staff and funds are allocated to platform capabilities</td><td>Is there a funded team, or is the platform a side project?</td></tr>
+      <tr><td>Adoption</td><td>Why and how users discover and use the platform</td><td>Do teams choose it, or are they told to?</td></tr>
+      <tr><td>Interfaces</td><td>How users interact with platform capabilities</td><td>Can a team self-serve, or does it still file tickets?</td></tr>
+      <tr><td>Operations</td><td>How capabilities are planned, prioritised, built and maintained</td><td>Who is on call when the platform breaks?</td></tr>
+      <tr><td>Measurement</td><td>How feedback and learning are gathered and used</td><td>What evidence shows the platform is helping?</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>The model is most useful as a diagnostic. Rate yourself honestly on each aspect, then invest in the weakest one. Organisations often over-invest in Interfaces, by buying a portal, while their real constraint is Investment or Measurement.</p>
+
+<h2 id="org-questions">The organisational questions to settle first</h2>
+<p>Most platform failures are organisational. Settle these before choosing tools:</p>
+<ol>
+  <li><strong>Who are the platform's users,</strong> and what are their three biggest sources of friction today?</li>
+  <li><strong>What does the platform team own,</strong> and what stays with product teams? Write the boundary down, including who is on call for what.</li>
+  <li><strong>How will teams interact with the platform team?</strong> The book <em>Team Topologies</em> describes platform teams providing capabilities "as a service" to stream-aligned teams, with collaboration reserved for discovering new needs. That is a useful default.</li>
+  <li><strong>Is adoption optional?</strong> If it is, the platform must compete on quality. If it isn't, be explicit about why, and expect to invest more in support.</li>
+  <li><strong>How will success be measured?</strong> Pick a few measures before launch.</li>
+</ol>
+
+<h2 id="measuring">Measuring whether it's working</h2>
+<p>Good measures combine delivery outcomes with developer experience:</p>
+<ul>
+  <li><strong>DORA's delivery measures,</strong> such as deployment frequency, lead time for changes, change failure rate and time to recover from failed deployments, tracked for teams on and off the golden paths. The <a href="https://dora.dev/" rel="noopener" target="_blank">DORA research programme</a> publishes guidance on measuring them well.</li>
+  <li><strong>Time to first deployment</strong> for a new service or a new engineer.</li>
+  <li><strong>Adoption:</strong> the share of services using each golden path, and how many teams stepped off it and why.</li>
+  <li><strong>Developer satisfaction,</strong> from short, regular surveys with free-text answers you actually read.</li>
+</ul>
+<p>Avoid turning these into team targets. Once deployment frequency becomes a goal, it stops measuring delivery capability.</p>
+
+<h2 id="portals">Before you buy a developer portal</h2>
+<p>A developer portal, such as one built on the open-source <a href="https://backstage.io/" rel="noopener" target="_blank">Backstage</a> framework or a commercial product, is a front end: a catalogue of services and owners, documentation, and a place to start golden-path templates. It is valuable when there is a platform behind it to present.</p>
+<p>Bought first, a portal tends to become a catalogue that drifts out of date, with templates that generate services nobody maintains. A better sequence is to build one or two golden paths that teams actually want, prove adoption, then add a portal when discoverability becomes the constraint.</p>
+<p>When you do evaluate portals, ask how the catalogue stays accurate without manual updates, how templates are versioned and upgraded after a service is created, and what it costs to maintain plugins. For an open-source framework, that maintenance is part of your team's ongoing work.</p>

@@ -4,33 +4,96 @@
     <title>TechStack Lab — new and updated guides</title>
     <link>https://techstacklab.site/</link>
     <atom:link href="https://techstacklab.site/feed.xml" rel="self" type="application/rss+xml"/>
-    <description>Field-tested guides on enterprise cloud, security, DevOps, SaaS and AI workflows. Includes revisions to existing guides.</description>
+    <description>Source-checked guides on enterprise cloud, security, DevOps, SaaS and AI workflows, including every revision to existing guides.</description>
     <language>en</language>
-    <lastBuildDate>Thu, 29 Oct 2026 09:30:00 +0400</lastBuildDate>
-    <!-- Add one <item> per new guide AND per substantive revision (use a distinct guid for each revision). -->
+    <lastBuildDate>Sat, 07 Nov 2026 08:00:00 +0400</lastBuildDate>
     <item>
-      <title>Updated: Zero Trust on AWS — replacing your VPN with identity-aware access</title>
-      <link>https://techstacklab.site/cybersecurity/zero-trust-aws-replace-vpn/</link>
-      <guid isPermaLink="false">techstacklab-zero-trust-aws-v1.2</guid>
-      <pubDate>Thu, 29 Oct 2026 09:30:00 +0400</pubDate>
-      <category>Cybersecurity</category>
-      <description>Added a log-only rollout pattern for device posture checks and clarified Verified Access logging destinations.</description>
-    </item>
-    <item>
-      <title>New: The real cost of multi-cloud in 2026</title>
-      <link>https://techstacklab.site/</link>
-      <guid isPermaLink="false">techstacklab-multi-cloud-cost-v1.0</guid>
-      <pubDate>Wed, 28 Oct 2026 08:00:00 +0400</pubDate>
+      <title>New: The real cost of multi-cloud: egress, identity sprawl, and the ops tax nobody budgets for</title>
+      <link>https://techstacklab.site/cloud-architecture/multi-cloud-cost-egress-identity/</link>
+      <guid isPermaLink="false">techstacklab-multi-cloud-cost-egress-identity-v1.0</guid>
+      <pubDate>Sat, 07 Nov 2026 08:00:00 +0400</pubDate>
       <category>Cloud architecture</category>
-      <description>A cost model for egress, duplicated security tooling, and the people needed to run three control planes.</description>
+      <description>A cost model for egress, duplicated security tooling, fragmented discounts and the people needed to run several control planes.</description>
     </item>
     <item>
-      <title>New: Zero Trust on AWS — replacing your VPN with identity-aware access</title>
-      <link>https://techstacklab.site/cybersecurity/zero-trust-aws-replace-vpn/</link>
-      <guid isPermaLink="false">techstacklab-zero-trust-aws-v1.0</guid>
-      <pubDate>Tue, 27 Oct 2026 08:00:00 +0400</pubDate>
+      <title>New: Terraform state at scale: remote backends, locking, and drift detection</title>
+      <link>https://techstacklab.site/devops/terraform-state-at-scale/</link>
+      <guid isPermaLink="false">techstacklab-terraform-state-at-scale-v1.0</guid>
+      <pubDate>Sat, 07 Nov 2026 08:00:00 +0400</pubDate>
+      <category>DevOps</category>
+      <description>Splitting state by blast radius, S3 native lockfile locking, migrating off DynamoDB, and catching drift in CI.</description>
+    </item>
+    <item>
+      <title>New: SSO tax, SCIM, and audit logs: the SaaS procurement checklist for security teams</title>
+      <link>https://techstacklab.site/saas-tools/saas-security-procurement-checklist/</link>
+      <guid isPermaLink="false">techstacklab-saas-security-procurement-checklist-v1.0</guid>
+      <pubDate>Sat, 07 Nov 2026 08:00:00 +0400</pubDate>
+      <category>SaaS tools</category>
+      <description>Twelve questions to settle before you sign, and which ones vendors quietly reserve for their enterprise tier.</description>
+    </item>
+    <item>
+      <title>New: Platform engineering vs. DevOps: what internal developer platforms actually change</title>
+      <link>https://techstacklab.site/devops/platform-engineering-vs-devops/</link>
+      <guid isPermaLink="false">techstacklab-platform-engineering-vs-devops-v1.0</guid>
+      <pubDate>Sat, 07 Nov 2026 08:00:00 +0400</pubDate>
+      <category>DevOps</category>
+      <description>Golden paths, the CNCF maturity model, and the org chart questions to answer before buying a developer portal.</description>
+    </item>
+    <item>
+      <title>New: Passkeys in the enterprise: rollout lessons for workforce identity</title>
+      <link>https://techstacklab.site/cybersecurity/passkeys-enterprise-rollout/</link>
+      <guid isPermaLink="false">techstacklab-passkeys-enterprise-rollout-v1.0</guid>
+      <pubDate>Sat, 07 Nov 2026 08:00:00 +0400</pubDate>
       <category>Cybersecurity</category>
-      <description>A phased migration plan using AWS Verified Access, your existing identity provider, and device posture signals.</description>
+      <description>Synced vs device-bound passkeys, what NIST SP 800-63B-4 allows, recovery flows, and retiring SMS codes without flooding the help desk.</description>
+    </item>
+    <item>
+      <title>New: Kubernetes cost allocation: building a showback model finance will trust</title>
+      <link>https://techstacklab.site/cloud-architecture/kubernetes-cost-allocation-showback/</link>
+      <guid isPermaLink="false">techstacklab-kubernetes-cost-allocation-showback-v1.0</guid>
+      <pubDate>Sat, 07 Nov 2026 08:00:00 +0400</pubDate>
+      <category>Cloud architecture</category>
+      <description>Requests vs usage, idle capacity and shared services: a defensible method for splitting cluster spend across teams, with a worked example.</description>
+    </item>
+    <item>
+      <title>New: Evaluating RAG pipelines for internal knowledge bases: a practical scorecard</title>
+      <link>https://techstacklab.site/ai-workflows/rag-evaluation-scorecard/</link>
+      <guid isPermaLink="false">techstacklab-rag-evaluation-scorecard-v1.0</guid>
+      <pubDate>Sat, 07 Nov 2026 08:00:00 +0400</pubDate>
+      <category>AI workflows</category>
+      <description>Retrieval precision, groundedness, permissions and freshness: how to score an internal assistant before employees stop trusting it.</description>
+    </item>
+    <item>
+      <title>New: Azure landing zones explained: management groups, policy, and subscription vending</title>
+      <link>https://techstacklab.site/cloud-architecture/azure-landing-zones-explained/</link>
+      <guid isPermaLink="false">techstacklab-azure-landing-zones-explained-v1.0</guid>
+      <pubDate>Sat, 07 Nov 2026 08:00:00 +0400</pubDate>
+      <category>Cloud architecture</category>
+      <description>The reference management group hierarchy, where to assign policy and access, and how subscription vending works.</description>
+    </item>
+    <item>
+      <title>New: Agentic workflows in ITSM: where automation helps and where it needs a human</title>
+      <link>https://techstacklab.site/ai-workflows/agentic-workflows-itsm/</link>
+      <guid isPermaLink="false">techstacklab-agentic-workflows-itsm-v1.0</guid>
+      <pubDate>Sat, 07 Nov 2026 08:00:00 +0400</pubDate>
+      <category>AI workflows</category>
+      <description>Ticket triage, runbook execution and change approvals, mapped to an autonomy level you can defend in an audit.</description>
+    </item>
+    <item>
+      <title>Updated: Zero Trust on AWS: replacing your VPN with identity-aware access</title>
+      <link>https://techstacklab.site/cybersecurity/zero-trust-aws-replace-vpn/</link>
+      <guid isPermaLink="false">techstacklab-zero-trust-aws-replace-vpn-v1.0</guid>
+      <pubDate>Fri, 06 Nov 2026 08:00:00 +0400</pubDate>
+      <category>Cybersecurity</category>
+      <description>Corrected the Cedar examples: group membership uses .contains(), not has.</description>
+    </item>
+    <item>
+      <title>New: Zero Trust on AWS: replacing your VPN with identity-aware access</title>
+      <link>https://techstacklab.site/cybersecurity/zero-trust-aws-replace-vpn/</link>
+      <guid isPermaLink="false">techstacklab-zero-trust-aws-replace-vpn-v1.0</guid>
+      <pubDate>Fri, 06 Nov 2026 08:00:00 +0400</pubDate>
+      <category>Cybersecurity</category>
+      <description>A phased migration plan using AWS Verified Access, your identity provider and device posture signals, without a big-bang cutover.</description>
     </item>
   </channel>
 </rss>

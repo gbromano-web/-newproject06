@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Platform engineering vs. DevOps: what internal developer platforms actually change — TechStack Lab</title>
+  <meta name="description" content="What platform engineering adds to DevOps, how internal developer platforms and golden paths work, how to judge maturity with the CNCF model, and the organisational questions to settle before buying a developer portal.">
+  <link rel="canonical" href="https://techstacklab.site/devops/platform-engineering-vs-devops/">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="TechStack Lab">
+  <meta property="og:title" content="Platform engineering vs. DevOps: what internal developer platforms actually change — TechStack Lab">
+  <meta property="og:description" content="What platform engineering adds to DevOps, how internal developer platforms and golden paths work, how to judge maturity with the CNCF model, and the organisational questions to settle before buying a developer portal.">
+  <meta property="og:url" content="https://techstacklab.site/devops/platform-engineering-vs-devops/">
+  <meta property="og:image" content="https://techstacklab.site/assets/covers/platform-engineering-vs-devops-1200x630.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="article:published_time" content="2026-11-07T08:00:00+04:00">
+  <meta property="article:modified_time" content="2026-11-07T08:00:00+04:00">
+  <meta property="article:section" content="DevOps">
+  <link rel="preload" href="/fonts/source-serif-4-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='28' height='28' rx='7' fill='%232456e8'/%3E%3Cpath d='M9 11h14M9 16h10M9 21h6' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+
+  <!-- Theme set before paint (prevents flash) -->
+  <script>(function(){try{var t=localStorage.getItem('tsl-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+
+  <!-- Google AdSense site verification (the ad library itself is lazy-loaded by adsense-config.js) -->
+  <meta name="google-adsense-account" content="ca-pub-XXXXXXXXXXXXXXXX">
+
+  <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
+  <link rel="preload" href="/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/ibm-plex-sans-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="alternate" type="application/rss+xml" title="TechStack Lab — new and updated guides" href="/feed.xml">
+  <link rel="stylesheet" href="/styles.css">
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "TechArticle",
+      "@id": "https://techstacklab.site/devops/platform-engineering-vs-devops/#article",
+      "headline": "Platform engineering vs. DevOps: what internal developer platforms actually change",
+      "description": "What platform engineering adds to DevOps, how internal developer platforms and golden paths work, how to judge maturity with the CNCF model, and the organisational questions to settle before buying a developer portal.",
+      "image": [
+        "https://techstacklab.site/assets/covers/platform-engineering-vs-devops-1200x675.png",
+        "https://techstacklab.site/assets/covers/platform-engineering-vs-devops-1200x900.png",
+        "https://techstacklab.site/assets/covers/platform-engineering-vs-devops-1200x1200.png"
+      ],
+      "datePublished": "2026-11-07T08:00:00+04:00",
+      "dateModified": "2026-11-07T08:00:00+04:00",
+      "author": {
+        "@type": "Organization",
+        "name": "TechStack Lab editorial team",
+        "url": "https://techstacklab.site/about.html"
+      },
+      "publisher": {
+        "@id": "https://techstacklab.site/#organization"
+      },
+      "mainEntityOfPage": "https://techstacklab.site/devops/platform-engineering-vs-devops/",
+      "articleSection": "DevOps",
+      "keywords": [
+        "platform engineering",
+        "devops",
+        "internal developer platform",
+        "golden path",
+        "developer portal",
+        "backstage",
+        "cncf",
+        "team topologies"
+      ],
+      "wordCount": 1141,
+      "inLanguage": "en"
+    },
+    {
+      "@type": "NewsMediaOrganization",
+      "@id": "https://techstacklab.site/#organization",
+      "name": "TechStack Lab",
+      "url": "https://techstacklab.site/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://techstacklab.site/assets/logo-600x60.png",
+        "width": 600,
+        "height": 60
+      },
+      "email": "gbromano.5bdf@gmail.com",
+      "publishingPrinciples": "https://techstacklab.site/about.html#editorial",
+      "correctionsPolicy": "https://techstacklab.site/about.html#corrections",
+      "actionableFeedbackPolicy": "https://techstacklab.site/contact.html"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://techstacklab.site/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "DevOps",
+          "item": "https://techstacklab.site/?cat=devops"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Platform engineering vs. DevOps"
+        }
+      ]
+    }
+  ]
+}
+  </script>
+</head>
+<body>
+  <div class="progress" id="readProgress" aria-hidden="true"></div>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/" aria-label="TechStack Lab home">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="7" fill="var(--accent)"/><path d="M9 11h14M9 16h10M9 21h6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <span class="brand-name">TechStack <span>Lab</span></span>
+      </a>
+
+      <nav class="primary-nav" id="primaryNav" aria-label="Primary">
+        <ul>
+          <li><a href="/?cat=cloud" data-cat-link="cloud">Cloud architecture</a></li>
+          <li><a href="/?cat=security" data-cat-link="security">Cybersecurity</a></li>
+          <li><a href="/?cat=saas" data-cat-link="saas">SaaS tools</a></li>
+          <li><a href="/?cat=devops" data-cat-link="devops">DevOps</a></li>
+          <li><a href="/?cat=ai" data-cat-link="ai">AI workflows</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-btn" id="themeToggle" type="button" aria-label="Toggle dark mode">
+          <svg class="theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          <svg class="theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+        <button class="icon-btn menu-btn" id="menuToggle" type="button" aria-controls="primaryNav" aria-expanded="false" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+
+      <form class="search" role="search" action="/" method="get" id="siteSearch">
+        <label for="q" class="sr-only">Search TechStack Lab</label>
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" name="q" type="search" placeholder="Search guides, tools, topics…" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="searchResults" aria-expanded="false">
+        <ul id="searchResults" class="search-results" role="listbox" hidden></ul>
+      </form>
+    </div>
+  </header>
+
+  <main id="main" class="page">
+    <div class="container">
+      <div class="layout">
+        <article aria-labelledby="article-title">
+          <nav class="breadcrumb" aria-label="Breadcrumb">
+            <ol>
+              <li><a href="/">Home</a></li>
+              <li><a href="/?cat=devops">DevOps</a></li>
+              <li aria-current="page">Platform engineering vs. DevOps</li>
+            </ol>
+          </nav>
+
+          <header class="article-header">
+            <a class="cat cat--devops" href="/?cat=devops">DevOps analysis</a>
+            <h1 class="article-title" id="article-title">Platform engineering vs. DevOps: what internal developer platforms actually change</h1>
+            <p class="article-dek">Platform engineering doesn&#x27;t replace DevOps; it is one way to make DevOps work at scale. The value comes from treating the platform as a product with real users — and most of the hard decisions are about teams, not tools.</p>
+            <div class="article-meta">
+              <span class="avatar" aria-hidden="true">TL</span>
+              <div class="byline">
+                <span>By <strong><a href="/about.html#editorial">TechStack Lab editorial team</a></strong></span>
+                <span>Published <time datetime="2026-11-07">Nov 7, 2026</time>, <span id="readTime">5 min read</span></span>
+              </div>
+            </div>
+          </header>
+
+          <!-- Living guide: version + review status + changelog (generated from metadata) -->
+          <section class="living-guide" aria-label="Guide status">
+            <div class="living-guide-head">
+              <span class="badge badge--new">New</span>
+              <p><strong>Living guide, version 1.0.</strong> Sources last checked Nov 7, 2026.</p>
+            </div>
+            <details>
+              <summary>What changed in this guide</summary>
+              <ol>
+                <li><time datetime="2026-11-07">Nov 7, 2026</time><span>First published.</span></li>
+              </ol>
+            </details>
+          </section>
+
+          <details class="toc-mobile">
+            <summary>On this page</summary>
+            <nav class="toc" aria-label="Table of contents (mobile)" data-toc></nav>
+          </details>
+
+          <div class="prose" id="articleBody">
+<p>Over the past few years, many organisations have renamed an infrastructure or DevOps team to "platform team" and started evaluating developer portals. Sometimes that reflects a real change in how the team works. Often it doesn't, and the portal becomes another tool that few people use.</p>
+
+<p>This guide explains what platform engineering actually adds to DevOps, how to tell where your organisation stands, and the decisions to make before spending money on tooling.</p>
+            <!-- AdSense Slot: Header (in-article after intro · reserved 100px mobile / 90px desktop) -->
+            <div class="ad-wrap">
+              <span class="ad-label">Advertisement</span>
+              <div class="ad-slot ad-slot--leaderboard" data-ad-key="header" data-ad-format="horizontal"></div>
+            </div>
+
+
+<h2 id="definitions">Two different things, often confused</h2>
+<p><strong>DevOps</strong> is a set of practices and a culture: teams that build software also run it, delivery is automated, and feedback from production shapes what gets built next. It says what good delivery looks like, not how an organisation of hundreds of engineers should provide the tooling to achieve it.</p>
+<p><strong>Platform engineering</strong> is one answer to that "how". The CNCF's platforms white paper describes platforms as curating and presenting common capabilities, frameworks and experiences for internal users, and platform engineering as the practice of planning and providing them. In plain terms: instead of every product team building its own pipelines, infrastructure templates, observability and security checks, a platform team provides those as shared, self-service capabilities.</p>
+<p>So the two aren't alternatives. When product teams each spend a large share of their time on undifferentiated infrastructure work, a platform is how you give that time back without abandoning "you build it, you run it".</p>
+
+<h2 id="what-changes">What an internal developer platform changes</h2>
+<p>An internal developer platform is the collection of self-service capabilities a platform team offers. In practice it usually includes:</p>
+<ul>
+  <li><strong>Environment and infrastructure provisioning,</strong> such as a new service with its database, network access and secrets, from a template rather than a ticket.</li>
+  <li><strong>Delivery pipelines</strong> with build, test, security scanning and deployment built in.</li>
+  <li><strong>Observability by default:</strong> logs, metrics, traces and alerts wired up when a service is created.</li>
+  <li><strong>Guardrails:</strong> policies that are enforced automatically, so compliance doesn't depend on every team remembering every rule.</li>
+  <li><strong>A catalogue</strong> of what exists and who owns it.</li>
+</ul>
+<p>The change for product teams is in the default experience. Without a platform, creating a production-ready service means assembling a dozen tools and filing several tickets. With one, it means choosing a template and getting a working, compliant service that the team then owns and runs.</p>
+
+<h3>Golden paths</h3>
+<p>A golden path, sometimes called a paved road, is a supported, opinionated route for a common task, such as "build and deploy a containerised API". It packages the platform team's recommended tools and practices so that following them is the easiest option.</p>
+<p>The important word is <em>easiest</em>, not <em>only</em>. Teams with unusual needs should be able to step off the path, accepting more responsibility when they do. A golden path that is mandatory and painful turns into a compliance mechanism that teams route around; one that is genuinely the fastest way to ship gets adopted without enforcement.</p>
+
+<h2 id="platform-as-product">Treat the platform as a product</h2>
+<p>The most consistent difference between platforms that work and those that don't is whether the platform team treats internal developers as customers. That means:</p>
+<ul>
+  <li><strong>Talking to users</strong> before building, and measuring what slows them down.</li>
+  <li><strong>A roadmap</strong> driven by those problems, published so teams can plan around it.</li>
+  <li><strong>Documentation and onboarding</strong> good enough that teams can self-serve without a meeting.</li>
+  <li><strong>Measuring adoption,</strong> and treating low adoption as a product problem rather than a communication problem.</li>
+</ul>
+<p>The CNCF maturity model describes the stage where investment in internal platforms resembles investment in external products, with product management and user experience roles, published roadmaps and data guiding funding.</p>
+
+
+            <!-- AdSense Slot: Mid-Content #1 (in-article · reserved 280px) -->
+            <div class="ad-wrap">
+              <span class="ad-label">Advertisement</span>
+              <div class="ad-slot ad-slot--inarticle" data-ad-key="midContent1" data-ad-format="fluid-inarticle"></div>
+            </div>
+<h2 id="maturity">Where are you? The CNCF maturity model</h2>
+<p>The CNCF's <a href="https://tag-app-delivery.cncf.io/whitepapers/platform-eng-maturity-model/" rel="noopener" target="_blank">Platform Engineering Maturity Model</a> describes four levels — <strong>Provisional</strong>, <strong>Operationalized</strong>, <strong>Scalable</strong> and <strong>Optimizing</strong> — across five aspects:</p>
+<div class="table-wrap">
+  <table>
+    <caption class="sr-only">Aspects of the CNCF Platform Engineering Maturity Model</caption>
+    <thead><tr><th scope="col">Aspect</th><th scope="col">What it asks</th><th scope="col">A question to test yourself</th></tr></thead>
+    <tbody>
+      <tr><td>Investment</td><td>How staff and funds are allocated to platform capabilities</td><td>Is there a funded team, or is the platform a side project?</td></tr>
+      <tr><td>Adoption</td><td>Why and how users discover and use the platform</td><td>Do teams choose it, or are they told to?</td></tr>
+      <tr><td>Interfaces</td><td>How users interact with platform capabilities</td><td>Can a team self-serve, or does it still file tickets?</td></tr>
+      <tr><td>Operations</td><td>How capabilities are planned, prioritised, built and maintained</td><td>Who is on call when the platform breaks?</td></tr>
+      <tr><td>Measurement</td><td>How feedback and learning are gathered and used</td><td>What evidence shows the platform is helping?</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>The model is most useful as a diagnostic. Rate yourself honestly on each aspect, then invest in the weakest one. Organisations often over-invest in Interfaces, by buying a portal, while their real constraint is Investment or Measurement.</p>
+
+<h2 id="org-questions">The organisational questions to settle first</h2>
+<p>Most platform failures are organisational. Settle these before choosing tools:</p>
+<ol>
+  <li><strong>Who are the platform's users,</strong> and what are their three biggest sources of friction today?</li>
+  <li><strong>What does the platform team own,</strong> and what stays with product teams? Write the boundary down, including who is on call for what.</li>
+  <li><strong>How will teams interact with the platform team?</strong> The book <em>Team Topologies</em> describes platform teams providing capabilities "as a service" to stream-aligned teams, with collaboration reserved for discovering new needs. That is a useful default.</li>
+  <li><strong>Is adoption optional?</strong> If it is, the platform must compete on quality. If it isn't, be explicit about why, and expect to invest more in support.</li>
+  <li><strong>How will success be measured?</strong> Pick a few measures before launch.</li>
+</ol>
+
+<h2 id="measuring">Measuring whether it's working</h2>
+<p>Good measures combine delivery outcomes with developer experience:</p>
+<ul>
+  <li><strong>DORA's delivery measures,</strong> such as deployment frequency, lead time for changes, change failure rate and time to recover from failed deployments, tracked for teams on and off the golden paths. The <a href="https://dora.dev/" rel="noopener" target="_blank">DORA research programme</a> publishes guidance on measuring them well.</li>
+  <li><strong>Time to first deployment</strong> for a new service or a new engineer.</li>
+  <li><strong>Adoption:</strong> the share of services using each golden path, and how many teams stepped off it and why.</li>
+  <li><strong>Developer satisfaction,</strong> from short, regular surveys with free-text answers you actually read.</li>
+</ul>
+<p>Avoid turning these into team targets. Once deployment frequency becomes a goal, it stops measuring delivery capability.</p>
+
+<h2 id="portals">Before you buy a developer portal</h2>
+<p>A developer portal, such as one built on the open-source <a href="https://backstage.io/" rel="noopener" target="_blank">Backstage</a> framework or a commercial product, is a front end: a catalogue of services and owners, documentation, and a place to start golden-path templates. It is valuable when there is a platform behind it to present.</p>
+<p>Bought first, a portal tends to become a catalogue that drifts out of date, with templates that generate services nobody maintains. A better sequence is to build one or two golden paths that teams actually want, prove adoption, then add a portal when discoverability becomes the constraint.</p>
+<p>When you do evaluate portals, ask how the catalogue stays accurate without manual updates, how templates are versioned and upgraded after a service is created, and what it costs to maintain plugins. For an open-source framework, that maintenance is part of your team's ongoing work.</p>
+
+            <section class="key-takeaways" aria-labelledby="takeaways-heading">
+              <h2 id="takeaways-heading">Key takeaways</h2>
+              <ul>
+                <li>DevOps is a set of practices; platform engineering is a way of providing shared capabilities so teams can follow them without each rebuilding the basics.</li>
+                <li>A platform is a product: it needs users, a roadmap, and evidence that teams choose it.</li>
+                <li>Golden paths should be the easiest route, not the only route.</li>
+                <li>Use the CNCF maturity model's five aspects to find your weakest area before buying tools.</li>
+                <li>A developer portal is an interface to a platform; buying one before the platform exists rarely works.</li>
+              </ul>
+            </section>
+
+            <h2 id="sources">Sources and further reading</h2>
+            <ul>
+              <li><a href="https://tag-app-delivery.cncf.io/whitepapers/platforms/" rel="noopener" target="_blank">CNCF Platforms white paper (CNCF TAG App Delivery)</a></li>
+              <li><a href="https://tag-app-delivery.cncf.io/whitepapers/platform-eng-maturity-model/" rel="noopener" target="_blank">CNCF Platform Engineering Maturity Model</a></li>
+              <li><a href="https://dora.dev/" rel="noopener" target="_blank">DORA research programme</a></li>
+              <li><a href="https://teamtopologies.com/" rel="noopener" target="_blank">Team Topologies</a></li>
+              <li><a href="https://backstage.io/" rel="noopener" target="_blank">Backstage developer portal framework</a></li>
+            </ul>
+
+            <p class="updated-note">Spot an error? <a href="/contact.html?topic=correction">Request a correction</a>. Our <a href="/about.html#corrections">corrections policy</a> explains how we handle them.</p>
+          </div>
+
+          <aside class="follow-cta" aria-labelledby="follow-heading">
+            <div>
+              <h2 id="follow-heading">Get notified when this guide changes</h2>
+              <p>Vendors change features and pricing often. We log every revision in the guide and in our RSS feed.</p>
+            </div>
+            <div class="follow-cta-actions">
+              <a class="btn" href="/#newsletter">Get updates by email</a>
+              <a class="btn btn--ghost" href="/feed.xml">RSS feed</a>
+            </div>
+          </aside>
+
+          <section class="author-box" aria-labelledby="author-name">
+            <span class="avatar avatar--lg" aria-hidden="true">TL</span>
+            <div>
+              <h2 id="author-name">TechStack Lab editorial team</h2>
+              <p class="role">TechStack Lab</p>
+              <p>Our guides are researched against vendor documentation, standards and primary sources, which are listed at the end of every guide. Drafts are prepared with AI assistance and checked against those sources before publication. Every revision is logged in the guide's changelog.</p>
+              <div class="author-links">
+                <a href="/about.html#editorial">Editorial guidelines</a>
+                <a href="/contact.html">Contact the team</a>
+              </div>
+            </div>
+          </section>
+
+          <section class="related" aria-labelledby="related-heading">
+            <div class="section-head"><h2 id="related-heading">Related guides</h2></div>
+            <div class="grid">
+            <article class="card">
+              <div class="card-art art art--devops"><div class="card-badges"></div><span class="art-label">Terraform state</span></div>
+              <div class="card-body">
+                <a class="cat cat--devops" href="/?cat=devops">DevOps</a>
+                <h3 class="card-title"><a href="/devops/terraform-state-at-scale/">Terraform state at scale: remote backends, locking, and drift detection</a></h3>
+                <p class="card-dek">How to organise Terraform state for a growing estate: splitting state by blast radius, S3 backends with native lockfile locking, migrating off DynamoDB locks, and detecting drift in CI.</p>
+                <div class="card-meta"><span><time datetime="2026-11-07">Nov 7</time></span><span>5 min read</span></div>
+              </div>
+            </article>
+            <article class="card">
+              <div class="card-art art art--cloud"><div class="card-badges"></div><span class="art-label">Multi-cloud cost model</span></div>
+              <div class="card-body">
+                <a class="cat cat--cloud" href="/?cat=cloud">Cloud architecture</a>
+                <h3 class="card-title"><a href="/cloud-architecture/multi-cloud-cost-egress-identity/">The real cost of multi-cloud: egress, identity sprawl, and the ops tax nobody budgets for</a></h3>
+                <p class="card-dek">A cost model for running workloads across AWS, Azure and Google Cloud: data transfer, duplicated security tooling, fragmented commitment discounts and the people needed to run more than one control plane.</p>
+                <div class="card-meta"><span><time datetime="2026-11-07">Nov 7</time></span><span>7 min read</span></div>
+              </div>
+            </article>
+            <article class="card">
+              <div class="card-art art art--saas"><div class="card-badges"></div><span class="art-label">SaaS procurement</span></div>
+              <div class="card-body">
+                <a class="cat cat--saas" href="/?cat=saas">SaaS tools</a>
+                <h3 class="card-title"><a href="/saas-tools/saas-security-procurement-checklist/">SSO tax, SCIM, and audit logs: the SaaS procurement checklist for security teams</a></h3>
+                <p class="card-dek">Twelve security questions to settle before signing a SaaS contract — single sign-on, SCIM provisioning, audit logs, data residency, exit terms — and which ones vendors often reserve for their enterprise tier.</p>
+                <div class="card-meta"><span><time datetime="2026-11-07">Nov 7</time></span><span>5 min read</span></div>
+              </div>
+            </article>
+            <article class="card">
+              <div class="card-art art art--security"><div class="card-badges"></div><span class="art-label">Workforce identity</span></div>
+              <div class="card-body">
+                <a class="cat cat--security" href="/?cat=security">Cybersecurity</a>
+                <h3 class="card-title"><a href="/cybersecurity/passkeys-enterprise-rollout/">Passkeys in the enterprise: rollout lessons for workforce identity</a></h3>
+                <p class="card-dek">How to roll out passkeys to employees: synced vs device-bound passkeys, what NIST SP 800-63B-4 allows, attestation and key restrictions, account recovery, and retiring SMS codes without overwhelming the help desk.</p>
+                <div class="card-meta"><span><time datetime="2026-11-07">Nov 7</time></span><span>5 min read</span></div>
+              </div>
+            </article>
+            </div>
+          </section>
+        </article>
+
+        <aside class="sidebar" aria-label="Sidebar">
+          <div class="sidebar-sticky">
+            <section class="widget ad-desktop-only" aria-labelledby="toc-heading" style="margin-bottom:24px">
+              <h2 id="toc-heading">On this page</h2>
+              <nav class="toc" aria-label="Table of contents" data-toc></nav>
+            </section>
+
+            <!-- AdSense Slot: Sidebar (desktop only · 300x600 · reserved 600px) -->
+            <div class="ad-wrap ad-desktop-only">
+              <span class="ad-label">Advertisement</span>
+              <div class="ad-slot ad-slot--sidebar" data-ad-key="sidebar" data-ad-format="vertical"></div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a class="brand" href="/" aria-label="TechStack Lab home">
+          <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="7" fill="var(--accent)"/><path d="M9 11h14M9 16h10M9 21h6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
+          <span class="brand-name">TechStack <span>Lab</span></span>
+        </a>
+        <p>Independent, source-checked guides on enterprise cloud, security, DevOps, SaaS and AI workflows. Advertising never influences editorial coverage.</p>
+      </div>
+      <nav aria-label="Categories">
+        <h2>Coverage</h2>
+        <ul>
+          <li><a href="/?cat=cloud">Cloud architecture</a></li>
+          <li><a href="/?cat=security">Cybersecurity</a></li>
+          <li><a href="/?cat=saas">SaaS tools</a></li>
+          <li><a href="/?cat=devops">DevOps</a></li>
+          <li><a href="/?cat=ai">AI workflows</a></li>
+        </ul>
+      </nav>
+      <nav aria-label="Company">
+        <h2>Company</h2>
+        <ul>
+          <li><a href="/about.html">About us</a></li>
+          <li><a href="/about.html#editorial">Editorial guidelines</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+          <li><a href="/feed.xml">RSS feed</a></li>
+          <li><a href="/privacy.html">Privacy policy</a></li>
+          <li><a href="/terms.html">Terms and disclaimer</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="container footer-bottom">
+      <p>© <span data-year>2026</span> TechStack Lab. All rights reserved.</p>
+      <button class="link-btn" type="button" data-open-consent>Cookie settings</button>
+    </div>
+  </footer>
+
+  <!-- AdSense Slot: Sticky Bottom (mobile only · 320x50 · fixed, no CLS) -->
+  <div class="ad-sticky" id="adSticky" hidden>
+    <button class="ad-sticky-close" type="button" aria-label="Close advertisement">×</button>
+    <div class="ad-slot ad-slot--sticky" data-ad-key="sticky" data-ad-format="horizontal"></div>
+  </div>
+
+  <!-- ===================== CONSENT BANNER ===================== -->
+  <div class="consent" id="consentBanner" role="dialog" aria-modal="false" aria-labelledby="consent-title" hidden>
+    <h2 id="consent-title">Your privacy choices</h2>
+    <p>We use cookies to keep the site working and, with your permission, to measure traffic and show ads — including personalized ads from Google and its partners. You can change this anytime via “Cookie settings”. <a href="/privacy.html#cookies">Learn more</a>.</p>
+    <div class="consent-prefs" id="consentPrefs" hidden>
+      <label class="toggle-row"><span>Strictly necessary<small>Theme, consent choice, security. Always on.</small></span><input type="checkbox" checked disabled></label>
+      <label class="toggle-row"><span>Analytics<small>Anonymous traffic measurement.</small></span><input type="checkbox" id="c-analytics"></label>
+      <label class="toggle-row"><span>Advertising<small>Store ad cookies to serve and measure ads.</small></span><input type="checkbox" id="c-ads"></label>
+      <label class="toggle-row"><span>Ad personalization<small>Tailor ads to your interests across sites.</small></span><input type="checkbox" id="c-personalization"></label>
+    </div>
+    <div class="consent-actions">
+      <button class="btn btn--ghost" type="button" data-consent="reject">Reject non-essential</button>
+      <button class="btn btn--ghost" type="button" data-consent="customize" id="consentCustomize">Customize</button>
+      <button class="btn" type="button" data-consent="accept">Accept all</button>
+    </div>
+  </div>
+
+  <script src="/adsense-config.js" defer></script>
+  <script src="/site.js" defer></script>
+</body>
+</html>

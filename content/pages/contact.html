@@ -1,0 +1,72 @@
+<!--meta
+{
+  "title": "Contact TechStack Lab",
+  "description": "Contact the TechStack Lab editorial team for corrections, story tips, partnerships or reader support by email.",
+  "type": "ContactPage",
+  "name": "Contact TechStack Lab"
+}
+-->
+      <header class="page-header">
+        <p class="eyebrow">Contact</p>
+        <h1 class="page-title">Talk to the TechStack Lab team</h1>
+        <p class="page-lead">Corrections, story suggestions, partnership questions or feedback on a guide. The form below opens your email app with your message ready to send, or you can email us directly.</p>
+      </header>
+
+      <div class="contact-grid">
+        <section aria-labelledby="form-heading">
+          <h2 id="form-heading" class="sr-only">Contact form</h2>
+          <!-- Static hosting: the form validates, then opens the visitor's email app with the message ready to send (see site.js). -->
+          <form id="contactForm" novalidate>
+
+            <div class="field">
+              <label for="cf-name">Your name</label>
+              <input class="input" id="cf-name" name="name" type="text" autocomplete="name" maxlength="100" required>
+              <span class="field-error" data-error-for="name" aria-live="polite"></span>
+            </div>
+            <div class="field">
+              <label for="cf-email">Work email</label>
+              <input class="input" id="cf-email" name="email" type="email" autocomplete="email" maxlength="254" required>
+              <span class="field-error" data-error-for="email" aria-live="polite"></span>
+            </div>
+            <div class="field">
+              <label for="cf-topic">Topic</label>
+              <select class="select" id="cf-topic" name="topic">
+                <option value="general">General question</option>
+                <option value="correction">Report a correction</option>
+                <option value="tip">Story suggestion</option>
+                <option value="partnership">Advertising &amp; partnerships</option>
+                <option value="newsletter">Newsletter</option>
+                <option value="privacy">Privacy request (GDPR / CCPA)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="cf-message">Message</label>
+              <textarea class="textarea" id="cf-message" name="message" minlength="20" maxlength="5000" required></textarea>
+              <span class="hint">For corrections, include the article link and the passage in question.</span>
+              <span class="field-error" data-error-for="message" aria-live="polite"></span>
+            </div>
+            <div class="field">
+              <label class="toggle-row" style="justify-content:flex-start"><input type="checkbox" name="consent" value="yes"> <span>I've read the <a href="/privacy.html">Privacy Policy</a> and agree to TechStack Lab using my details to reply to this message.</span></label>
+              <span class="field-error" data-error-for="consent" aria-live="polite"></span>
+            </div>
+            <button class="btn" type="submit">Open in my email app</button>
+            <div class="form-status" id="formStatus" role="status" hidden></div>
+          </form>
+        </section>
+
+        <aside class="sidebar" aria-label="Other ways to reach us">
+          <div class="widget">
+            <h2>Email</h2>
+            <p><a href="mailto:gbromano.5bdf@gmail.com">gbromano.5bdf@gmail.com</a></p>
+            <p style="color:var(--text-2);font-size:.9rem">General enquiries, corrections, privacy requests and partnerships all go to this inbox.</p>
+          </div>
+          <div class="widget">
+            <h2>Response times</h2>
+            <ul class="legal" style="padding-left:1.1em;margin:0;font-size:.9rem">
+              <li>Corrections: within 2 business days</li>
+              <li>Privacy requests: within 30 days (GDPR) / 45 days (CCPA)</li>
+              <li>Everything else: we aim to reply within 5 business days</li>
+            </ul>
+          </div>
+        </aside>
+      </div>

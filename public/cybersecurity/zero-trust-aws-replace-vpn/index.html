@@ -3,135 +3,139 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Zero Trust on AWS: Replacing Your VPN with Identity-Aware Access — TechStack Lab</title>
-  <meta name="description" content="A phased plan to replace a corporate VPN with identity-aware access on AWS using Verified Access, your existing identity provider, and device posture signals — with policy examples and a migration checklist.">
+  <title>Zero Trust on AWS: replacing your VPN with identity-aware access — TechStack Lab</title>
+  <meta name="description" content="A phased plan to replace a corporate VPN with identity-aware access on AWS using Verified Access, your identity provider and device posture signals, with Cedar policy examples.">
   <link rel="canonical" href="https://techstacklab.site/cybersecurity/zero-trust-aws-replace-vpn/">
-  <meta name="theme-color" content="#2456e8">
+  <meta name="theme-color" content="#0f766e">
   <meta name="robots" content="index, follow, max-image-preview:large">
-  <meta name="author" content="Priya Raman">
-
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="TechStack Lab">
-  <meta property="og:title" content="Zero Trust on AWS: Replacing Your VPN with Identity-Aware Access">
-  <meta property="og:description" content="A phased migration plan using AWS Verified Access, your IdP, and device posture — without a big-bang cutover.">
+  <meta property="og:title" content="Zero Trust on AWS: replacing your VPN with identity-aware access — TechStack Lab">
+  <meta property="og:description" content="A phased plan to replace a corporate VPN with identity-aware access on AWS using Verified Access, your identity provider and device posture signals, with Cedar policy examples.">
   <meta property="og:url" content="https://techstacklab.site/cybersecurity/zero-trust-aws-replace-vpn/">
-  <meta property="og:image" content="https://techstacklab.site/assets/covers/zero-trust-aws-1200x630.png">
-  <meta property="article:published_time" content="2026-10-27T08:00:00+04:00">
-  <meta property="article:modified_time" content="2026-11-06T17:30:00+04:00">
-  <meta property="article:section" content="Cybersecurity">
+  <meta property="og:image" content="https://techstacklab.site/assets/covers/zero-trust-aws-replace-vpn-1200x630.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-
+  <meta property="article:published_time" content="2026-11-06T08:00:00+04:00">
+  <meta property="article:modified_time" content="2026-11-06T08:00:00+04:00">
+  <meta property="article:section" content="Cybersecurity">
+  <link rel="preload" href="/fonts/source-serif-4-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='28' height='28' rx='7' fill='%232456e8'/%3E%3Cpath d='M9 11h14M9 16h10M9 21h6' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+
+  <!-- Theme set before paint (prevents flash) -->
   <script>(function(){try{var t=localStorage.getItem('tsl-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+
+  <!-- Google AdSense site verification (the ad library itself is lazy-loaded by adsense-config.js) -->
   <meta name="google-adsense-account" content="ca-pub-XXXXXXXXXXXXXXXX">
+
   <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
   <link rel="preload" href="/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/ibm-plex-sans-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/fonts/source-serif-4-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="alternate" type="application/rss+xml" title="TechStack Lab — new and updated guides" href="/feed.xml">
   <link rel="stylesheet" href="/styles.css">
 
-  <!-- Schema: TechArticle + Person + Publisher + BreadcrumbList -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "TechArticle",
-        "@id": "https://techstacklab.site/cybersecurity/zero-trust-aws-replace-vpn/#article",
-        "headline": "Zero Trust on AWS: Replacing Your VPN with Identity-Aware Access",
-        "description": "A phased plan to replace a corporate VPN with identity-aware access on AWS using Verified Access, your existing identity provider, and device posture signals.",
-        "image": [
-          "https://techstacklab.site/assets/covers/zero-trust-aws-1200x675.png",
-          "https://techstacklab.site/assets/covers/zero-trust-aws-1200x900.png",
-          "https://techstacklab.site/assets/covers/zero-trust-aws-1200x1200.png"
-        ],
-        "datePublished": "2026-10-27T08:00:00+04:00",
-        "dateModified": "2026-11-06T17:30:00+04:00",
-        "author": { "@id": "https://techstacklab.site/authors/priya-raman/#person" },
-        "publisher": { "@id": "https://techstacklab.site/#organization" },
-        "mainEntityOfPage": "https://techstacklab.site/cybersecurity/zero-trust-aws-replace-vpn/",
-        "articleSection": "Cybersecurity",
-        "keywords": ["zero trust", "AWS Verified Access", "VPN replacement", "identity-aware proxy", "device posture", "Cedar policy"],
-        "proficiencyLevel": "Expert",
-        "dependencies": "AWS account, OIDC-compatible identity provider or IAM Identity Center",
-        "wordCount": 1300,
-        "inLanguage": "en"
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "TechArticle",
+      "@id": "https://techstacklab.site/cybersecurity/zero-trust-aws-replace-vpn/#article",
+      "headline": "Zero Trust on AWS: replacing your VPN with identity-aware access",
+      "description": "A phased plan to replace a corporate VPN with identity-aware access on AWS using Verified Access, your identity provider and device posture signals, with Cedar policy examples.",
+      "image": [
+        "https://techstacklab.site/assets/covers/zero-trust-aws-replace-vpn-1200x675.png",
+        "https://techstacklab.site/assets/covers/zero-trust-aws-replace-vpn-1200x900.png",
+        "https://techstacklab.site/assets/covers/zero-trust-aws-replace-vpn-1200x1200.png"
+      ],
+      "datePublished": "2026-11-06T08:00:00+04:00",
+      "dateModified": "2026-11-06T08:00:00+04:00",
+      "author": {
+        "@type": "Organization",
+        "name": "TechStack Lab editorial team",
+        "url": "https://techstacklab.site/about.html"
       },
-      {
-        "@type": "Person",
-        "@id": "https://techstacklab.site/authors/priya-raman/#person",
-        "name": "Priya Raman",
-        "jobTitle": "Senior Security Editor",
-        "url": "https://techstacklab.site/authors/priya-raman/",
-        "worksFor": { "@id": "https://techstacklab.site/#organization" },
-        "sameAs": ["https://www.linkedin.com/in/REPLACE-WITH-REAL-PROFILE"]
+      "publisher": {
+        "@id": "https://techstacklab.site/#organization"
       },
-      {
-        "@type": "NewsMediaOrganization",
-        "@id": "https://techstacklab.site/#organization",
-        "name": "TechStack Lab",
-        "url": "https://techstacklab.site/",
-        "logo": { "@type": "ImageObject", "url": "https://techstacklab.site/assets/logo-600x60.png", "width": 600, "height": 60 }
+      "mainEntityOfPage": "https://techstacklab.site/cybersecurity/zero-trust-aws-replace-vpn/",
+      "articleSection": "Cybersecurity",
+      "keywords": [
+        "zero trust",
+        "AWS Verified Access",
+        "VPN replacement",
+        "identity-aware access",
+        "device posture",
+        "Cedar policy"
+      ],
+      "wordCount": 1150,
+      "inLanguage": "en"
+    },
+    {
+      "@type": "NewsMediaOrganization",
+      "@id": "https://techstacklab.site/#organization",
+      "name": "TechStack Lab",
+      "url": "https://techstacklab.site/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://techstacklab.site/assets/logo-600x60.png",
+        "width": 600,
+        "height": 60
       },
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://techstacklab.site/" },
-          { "@type": "ListItem", "position": 2, "name": "Cybersecurity", "item": "https://techstacklab.site/cybersecurity/" },
-          { "@type": "ListItem", "position": 3, "name": "Zero Trust on AWS" }
-        ]
-      }
-    ]
-  }
+      "email": "gbromano.5bdf@gmail.com",
+      "publishingPrinciples": "https://techstacklab.site/about.html#editorial",
+      "correctionsPolicy": "https://techstacklab.site/about.html#corrections",
+      "actionableFeedbackPolicy": "https://techstacklab.site/contact.html"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://techstacklab.site/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Cybersecurity",
+          "item": "https://techstacklab.site/?cat=security"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Zero Trust on AWS"
+        }
+      ]
+    }
+  ]
+}
   </script>
-
-  <!--
-    ALTERNATIVE SCHEMA PATTERNS — use only when the page genuinely matches the type.
-    Marking up a guide as a product review is a structured-data spam violation.
-
-    1) Breaking news / time-sensitive reporting → swap "TechArticle" for "NewsArticle"
-       (keep every other property the same; remove proficiencyLevel and dependencies).
-
-    2) Hands-on product review (e.g. "CrowdStrike Falcon Review") → add this node to @graph:
-       {
-         "@type": "Product",
-         "name": "Example Product Name",
-         "brand": { "@type": "Brand", "name": "Vendor Name" },
-         "category": "Endpoint Detection and Response",
-         "review": {
-           "@type": "Review",
-           "author": { "@id": "https://techstacklab.site/authors/priya-raman/#person" },
-           "datePublished": "2026-10-27",
-           "reviewRating": { "@type": "Rating", "ratingValue": 4.3, "bestRating": 5 },
-           "positiveNotes": { "@type": "ItemList", "itemListElement": [
-             { "@type": "ListItem", "position": 1, "name": "Strong detection coverage" } ] },
-           "negativeNotes": { "@type": "ItemList", "itemListElement": [
-             { "@type": "ListItem", "position": 1, "name": "Premium modules priced separately" } ] }
-         }
-       }
-  -->
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
   <div class="progress" id="readProgress" aria-hidden="true"></div>
+  <a class="skip-link" href="#main">Skip to content</a>
 
   <!-- ===================== HEADER ===================== -->
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="/index.html" aria-label="TechStack Lab home">
+      <a class="brand" href="/" aria-label="TechStack Lab home">
         <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="7" fill="var(--accent)"/><path d="M9 11h14M9 16h10M9 21h6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
         <span class="brand-name">TechStack <span>Lab</span></span>
       </a>
+
       <nav class="primary-nav" id="primaryNav" aria-label="Primary">
         <ul>
-          <li><a href="/index.html?cat=cloud">Cloud architecture</a></li>
-          <li><a href="/index.html?cat=security" aria-current="page">Cybersecurity</a></li>
-          <li><a href="/index.html?cat=saas">SaaS tools</a></li>
-          <li><a href="/index.html?cat=devops">DevOps</a></li>
-          <li><a href="/index.html?cat=ai">AI workflows</a></li>
+          <li><a href="/?cat=cloud" data-cat-link="cloud">Cloud architecture</a></li>
+          <li><a href="/?cat=security" data-cat-link="security">Cybersecurity</a></li>
+          <li><a href="/?cat=saas" data-cat-link="saas">SaaS tools</a></li>
+          <li><a href="/?cat=devops" data-cat-link="devops">DevOps</a></li>
+          <li><a href="/?cat=ai" data-cat-link="ai">AI workflows</a></li>
         </ul>
       </nav>
+
       <div class="header-actions">
         <button class="icon-btn" id="themeToggle" type="button" aria-label="Toggle dark mode">
           <svg class="theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -141,7 +145,8 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </button>
       </div>
-      <form class="search" role="search" action="/index.html" method="get" id="siteSearch">
+
+      <form class="search" role="search" action="/" method="get" id="siteSearch">
         <label for="q" class="sr-only">Search TechStack Lab</label>
         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input id="q" name="q" type="search" placeholder="Search guides, tools, topics…" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="searchResults" aria-expanded="false">
@@ -156,39 +161,36 @@
         <article aria-labelledby="article-title">
           <nav class="breadcrumb" aria-label="Breadcrumb">
             <ol>
-              <li><a href="/index.html">Home</a></li>
-              <li><a href="/index.html?cat=security">Cybersecurity</a></li>
+              <li><a href="/">Home</a></li>
+              <li><a href="/?cat=security">Cybersecurity</a></li>
               <li aria-current="page">Zero Trust on AWS</li>
             </ol>
           </nav>
 
           <header class="article-header">
-            <a class="cat cat--security" href="/index.html?cat=security">Cybersecurity guide</a>
+            <a class="cat cat--security" href="/?cat=security">Cybersecurity guide</a>
             <h1 class="article-title" id="article-title">Zero Trust on AWS: replacing your VPN with identity-aware access</h1>
-            <p class="article-dek">A phased migration plan using AWS Verified Access, the identity provider you already run, and device posture signals — so you can retire network-level trust one application at a time instead of in a single risky cutover.</p>
+            <p class="article-dek">A phased migration plan using AWS Verified Access, the identity provider you already run, and device posture signals, so you can retire network-level trust one application at a time instead of in a single risky cutover.</p>
             <div class="article-meta">
-              <!-- REPLACE: author details must belong to a real contributor -->
-              <span class="avatar" aria-hidden="true">PR</span>
+              <span class="avatar" aria-hidden="true">TL</span>
               <div class="byline">
-                <span>By <strong><a href="/about.html#team">Priya Raman</a></strong>, Senior Security Editor</span>
-                <span>Published <time datetime="2026-10-27">Oct 27, 2026</time>, <span id="readTime">6 min read</span></span>
+                <span>By <strong><a href="/about.html#editorial">TechStack Lab editorial team</a></strong></span>
+                <span>Published <time datetime="2026-11-06">Nov 6, 2026</time>, <span id="readTime">5 min read</span></span>
               </div>
             </div>
           </header>
 
-          <!-- Living guide: version + review status + changelog. Update on every substantive revision. -->
+          <!-- Living guide: version + review status + changelog (generated from metadata) -->
           <section class="living-guide" aria-label="Guide status">
             <div class="living-guide-head">
-              <span class="badge badge--updated">Updated Nov 6</span>
-              <p><strong>Living guide, version 1.3.</strong> Reviewed against current AWS documentation on Oct 29, 2026.</p>
+              <span class="badge badge--new">New</span>
+              <p><strong>Living guide, version 1.1.</strong> Sources last checked Nov 6, 2026.</p>
             </div>
             <details>
               <summary>What changed in this guide</summary>
               <ol>
                 <li><time datetime="2026-11-06">Nov 6, 2026</time><span>Corrected the Cedar examples: group membership uses <code>.contains()</code>, not <code>has</code>.</span></li>
-                <li><time datetime="2026-10-29">Oct 29, 2026</time><span>Added the log-only rollout pattern for device posture checks. Clarified Verified Access logging destinations.</span></li>
-                <li><time datetime="2026-10-28">Oct 28, 2026</time><span>Expanded the break-glass access section.</span></li>
-                <li><time datetime="2026-10-27">Oct 27, 2026</time><span>First published.</span></li>
+                <li><time datetime="2026-11-06">Nov 6, 2026</time><span>First published.</span></li>
               </ol>
             </details>
           </section>
@@ -199,15 +201,15 @@
           </details>
 
           <div class="prose" id="articleBody">
-            <p>For most enterprises, the corporate VPN started as a convenience and became a liability. It grants a device a network address inside your perimeter, and from that point on, reachability is the default. Every internal app behind it inherits the same coarse trust decision that was made once, at connection time.</p>
+<p>For most enterprises, the corporate VPN started as a convenience and became a liability. It grants a device a network address inside your perimeter, and from that point on, reachability is the default. Every internal app behind it inherits the same coarse trust decision that was made once, at connection time.</p>
 
             <p>Identity-aware access flips that model. Instead of asking “is this device on our network?”, every request asks “is this user, on this device, in this state, allowed to reach this specific application right now?” On AWS, the managed building block for that is <strong>AWS Verified Access</strong>. This guide walks through how to adopt it incrementally, what the policies look like, and where teams usually get stuck.</p>
-
-            <!-- AdSense Slot: Header (in-article, after intro · reserved 100px mobile / 90px desktop) -->
+            <!-- AdSense Slot: Header (in-article after intro · reserved 100px mobile / 90px desktop) -->
             <div class="ad-wrap">
               <span class="ad-label">Advertisement</span>
               <div class="ad-slot ad-slot--leaderboard" data-ad-key="header" data-ad-format="horizontal"></div>
             </div>
+
 
             <h2 id="why-vpns-break">Why VPNs became the bottleneck</h2>
             <p>The problems with VPN-centric access are rarely about the tunnel itself. They come from what the tunnel implies:</p>
@@ -255,12 +257,6 @@
 
             <p>Policies are written in <strong>Cedar</strong>, AWS's open-source policy language. Because policies are evaluated on every request, a user whose device falls out of compliance — disk encryption disabled, EDR agent stopped — loses access on their next request rather than at the next VPN reconnect.</p>
 
-            <!-- AdSense Slot: Mid-Content #1 (in-article · reserved 280px) -->
-            <div class="ad-wrap">
-              <span class="ad-label">Advertisement</span>
-              <div class="ad-slot ad-slot--inarticle" data-ad-key="midContent1" data-ad-format="fluid-inarticle"></div>
-            </div>
-
             <h2 id="reference-architecture">A reference architecture that scales</h2>
             <p>Teams that succeed with this pattern tend to make the same structural decisions early:</p>
             <ol>
@@ -271,7 +267,13 @@
               <li><strong>Manage everything as code.</strong> Instances, groups, endpoints and policies are all supported by CloudFormation and Terraform. Policy changes should go through review like any other access change.</li>
             </ol>
 
-            <h2 id="writing-policies">Writing your first Cedar policies</h2>
+            
+            <!-- AdSense Slot: Mid-Content #1 (in-article · reserved 280px) -->
+            <div class="ad-wrap">
+              <span class="ad-label">Advertisement</span>
+              <div class="ad-slot ad-slot--inarticle" data-ad-key="midContent1" data-ad-format="fluid-inarticle"></div>
+            </div>
+<h2 id="writing-policies">Writing your first Cedar policies</h2>
             <p>Start with a group policy that requires an authenticated user from a known directory group and a device reported as low risk. The exact attribute paths depend on the <em>policy reference name</em> you give each trust provider — here they are named <code>idp</code> and <code>device</code>.</p>
 
 <pre><code>// Group policy: general-internal
@@ -315,12 +317,6 @@ when {
               </table>
             </div>
 
-            <!-- AdSense Slot: Mid-Content #2 (long-form only · reserved 280px) -->
-            <div class="ad-wrap">
-              <span class="ad-label">Advertisement</span>
-              <div class="ad-slot ad-slot--inarticle" data-ad-key="midContent2" data-ad-format="fluid-inarticle"></div>
-            </div>
-
             <h2 id="common-pitfalls">Common pitfalls (and how to avoid them)</h2>
             <h3>Treating non-HTTP traffic as an afterthought</h3>
             <p>Database clients, SSH and RDP don't behave like browser apps. Verify which protocols and endpoint types your Verified Access configuration supports in your target regions, and plan a separate path — for example Session Manager for shell access — for anything that doesn't fit. Do this in phase 0, not phase 4.</p>
@@ -351,79 +347,79 @@ when {
               <li><a href="https://www.cedarpolicy.com/" rel="noopener" target="_blank">Cedar policy language documentation</a></li>
               <li><a href="https://csrc.nist.gov/pubs/sp/800/207/final" rel="noopener" target="_blank">NIST SP 800-207: Zero Trust Architecture</a></li>
               <li><a href="https://www.cisa.gov/zero-trust-maturity-model" rel="noopener" target="_blank">CISA Zero Trust Maturity Model</a></li>
+              <li><a href="https://aws.amazon.com/blogs/security/a-walk-through-aws-verified-access-policies" rel="noopener" target="_blank">A walk through AWS Verified Access policies (AWS Security Blog)</a></li>
             </ul>
 
             <p class="updated-note">Spot an error? <a href="/contact.html?topic=correction">Request a correction</a>. Our <a href="/about.html#corrections">corrections policy</a> explains how we handle them.</p>
           </div>
 
-          <!-- Follow prompt: the return-visit hook at the moment of highest intent -->
           <aside class="follow-cta" aria-labelledby="follow-heading">
             <div>
               <h2 id="follow-heading">Get notified when this guide changes</h2>
-              <p>AWS ships changes to Verified Access often. We log every revision and send them in The Weekly Stack.</p>
+              <p>Vendors change features and pricing often. We log every revision in the guide and in our RSS feed.</p>
             </div>
             <div class="follow-cta-actions">
-              <a class="btn" href="/index.html#newsletter">Subscribe</a>
+              <a class="btn" href="/#newsletter">Get updates by email</a>
               <a class="btn btn--ghost" href="/feed.xml">RSS feed</a>
             </div>
           </aside>
 
-          <!-- ===================== AUTHOR BIO ===================== -->
-          <!-- REPLACE: use a real contributor's name, photo, credentials and profile links -->
           <section class="author-box" aria-labelledby="author-name">
-            <span class="avatar avatar--lg" aria-hidden="true">PR</span>
+            <span class="avatar avatar--lg" aria-hidden="true">TL</span>
             <div>
-              <h2 id="author-name">Priya Raman</h2>
-              <p class="role">Senior Security Editor · TechStack Lab</p>
-              <p>Priya covers identity, zero trust, and cloud security. Before joining TechStack Lab she spent a decade in security engineering, leading identity platform and access-control programs for regulated industries. She tests every configuration she writes about in a dedicated lab account.</p>
+              <h2 id="author-name">TechStack Lab editorial team</h2>
+              <p class="role">TechStack Lab</p>
+              <p>Our guides are researched against vendor documentation, standards and primary sources, which are listed at the end of every guide. Drafts are prepared with AI assistance and checked against those sources before publication. Every revision is logged in the guide's changelog.</p>
               <div class="author-links">
-                <a href="/about.html#team">All articles</a>
-                <a href="https://www.linkedin.com/in/REPLACE-WITH-REAL-PROFILE" rel="noopener me" target="_blank">LinkedIn</a>
+                <a href="/about.html#editorial">Editorial guidelines</a>
+                <a href="/contact.html">Contact the team</a>
               </div>
             </div>
           </section>
 
-          <!-- ===================== RELATED ===================== -->
           <section class="related" aria-labelledby="related-heading">
             <div class="section-head"><h2 id="related-heading">Related guides</h2></div>
             <div class="grid">
-              <article class="card">
-                <div class="card-art art art--security"><span class="art-label">Identity</span></div>
-                <div class="card-body">
-                  <a class="cat cat--security" href="/index.html?cat=security">Cybersecurity</a>
-                  <h3 class="card-title"><a href="/article-template.html">Passkeys in the Enterprise: Rollout Lessons for Workforce Identity</a></h3>
-                  <div class="byline"><span><strong>Priya Raman</strong></span><span class="dot">12 min</span></div>
-                </div>
-              </article>
-              <article class="card">
-                <div class="card-art art art--saas"><span class="art-label">Procurement</span></div>
-                <div class="card-body">
-                  <a class="cat cat--saas" href="/index.html?cat=saas">SaaS tools</a>
-                  <h3 class="card-title"><a href="/article-template.html">SSO Tax, SCIM, and Audit Logs: The SaaS Procurement Checklist</a></h3>
-                  <div class="byline"><span><strong>Priya Raman</strong></span><span class="dot">9 min</span></div>
-                </div>
-              </article>
-              <article class="card">
-                <div class="card-art art art--cloud"><span class="art-label">Multi-cloud</span></div>
-                <div class="card-body">
-                  <a class="cat cat--cloud" href="/index.html?cat=cloud">Cloud architecture</a>
-                  <h3 class="card-title"><a href="/article-template.html">The Real Cost of Multi-Cloud in 2026</a></h3>
-                  <div class="byline"><span><strong>Daniel Okafor</strong></span><span class="dot">14 min</span></div>
-                </div>
-              </article>
-              <article class="card">
-                <div class="card-art art art--devops"><span class="art-label">Terraform</span></div>
-                <div class="card-body">
-                  <a class="cat cat--devops" href="/index.html?cat=devops">DevOps</a>
-                  <h3 class="card-title"><a href="/article-template.html">Terraform State at Scale: Remote Backends, Locking, and Drift</a></h3>
-                  <div class="byline"><span><strong>Marcus Lindqvist</strong></span><span class="dot">14 min</span></div>
-                </div>
-              </article>
+            <article class="card">
+              <div class="card-art art art--security"><div class="card-badges"></div><span class="art-label">Workforce identity</span></div>
+              <div class="card-body">
+                <a class="cat cat--security" href="/?cat=security">Cybersecurity</a>
+                <h3 class="card-title"><a href="/cybersecurity/passkeys-enterprise-rollout/">Passkeys in the enterprise: rollout lessons for workforce identity</a></h3>
+                <p class="card-dek">How to roll out passkeys to employees: synced vs device-bound passkeys, what NIST SP 800-63B-4 allows, attestation and key restrictions, account recovery, and retiring SMS codes without overwhelming the help desk.</p>
+                <div class="card-meta"><span><time datetime="2026-11-07">Nov 7</time></span><span>5 min read</span></div>
+              </div>
+            </article>
+            <article class="card">
+              <div class="card-art art art--cloud"><div class="card-badges"></div><span class="art-label">Multi-cloud cost model</span></div>
+              <div class="card-body">
+                <a class="cat cat--cloud" href="/?cat=cloud">Cloud architecture</a>
+                <h3 class="card-title"><a href="/cloud-architecture/multi-cloud-cost-egress-identity/">The real cost of multi-cloud: egress, identity sprawl, and the ops tax nobody budgets for</a></h3>
+                <p class="card-dek">A cost model for running workloads across AWS, Azure and Google Cloud: data transfer, duplicated security tooling, fragmented commitment discounts and the people needed to run more than one control plane.</p>
+                <div class="card-meta"><span><time datetime="2026-11-07">Nov 7</time></span><span>7 min read</span></div>
+              </div>
+            </article>
+            <article class="card">
+              <div class="card-art art art--devops"><div class="card-badges"></div><span class="art-label">Terraform state</span></div>
+              <div class="card-body">
+                <a class="cat cat--devops" href="/?cat=devops">DevOps</a>
+                <h3 class="card-title"><a href="/devops/terraform-state-at-scale/">Terraform state at scale: remote backends, locking, and drift detection</a></h3>
+                <p class="card-dek">How to organise Terraform state for a growing estate: splitting state by blast radius, S3 backends with native lockfile locking, migrating off DynamoDB locks, and detecting drift in CI.</p>
+                <div class="card-meta"><span><time datetime="2026-11-07">Nov 7</time></span><span>5 min read</span></div>
+              </div>
+            </article>
+            <article class="card">
+              <div class="card-art art art--saas"><div class="card-badges"></div><span class="art-label">SaaS procurement</span></div>
+              <div class="card-body">
+                <a class="cat cat--saas" href="/?cat=saas">SaaS tools</a>
+                <h3 class="card-title"><a href="/saas-tools/saas-security-procurement-checklist/">SSO tax, SCIM, and audit logs: the SaaS procurement checklist for security teams</a></h3>
+                <p class="card-dek">Twelve security questions to settle before signing a SaaS contract — single sign-on, SCIM provisioning, audit logs, data residency, exit terms — and which ones vendors often reserve for their enterprise tier.</p>
+                <div class="card-meta"><span><time datetime="2026-11-07">Nov 7</time></span><span>5 min read</span></div>
+              </div>
+            </article>
             </div>
           </section>
         </article>
 
-        <!-- ===================== SIDEBAR ===================== -->
         <aside class="sidebar" aria-label="Sidebar">
           <div class="sidebar-sticky">
             <section class="widget ad-desktop-only" aria-labelledby="toc-heading" style="margin-bottom:24px">
@@ -446,20 +442,20 @@ when {
   <footer class="site-footer">
     <div class="container footer-grid">
       <div>
-        <a class="brand" href="/index.html" aria-label="TechStack Lab home">
+        <a class="brand" href="/" aria-label="TechStack Lab home">
           <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="7" fill="var(--accent)"/><path d="M9 11h14M9 16h10M9 21h6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
           <span class="brand-name">TechStack <span>Lab</span></span>
         </a>
-        <p>Independent, field-tested guidance on enterprise cloud, security, DevOps, SaaS and AI workflows. Advertising never influences editorial coverage.</p>
+        <p>Independent, source-checked guides on enterprise cloud, security, DevOps, SaaS and AI workflows. Advertising never influences editorial coverage.</p>
       </div>
       <nav aria-label="Categories">
         <h2>Coverage</h2>
         <ul>
-          <li><a href="/index.html?cat=cloud">Cloud architecture</a></li>
-          <li><a href="/index.html?cat=security">Cybersecurity</a></li>
-          <li><a href="/index.html?cat=saas">SaaS tools</a></li>
-          <li><a href="/index.html?cat=devops">DevOps</a></li>
-          <li><a href="/index.html?cat=ai">AI workflows</a></li>
+          <li><a href="/?cat=cloud">Cloud architecture</a></li>
+          <li><a href="/?cat=security">Cybersecurity</a></li>
+          <li><a href="/?cat=saas">SaaS tools</a></li>
+          <li><a href="/?cat=devops">DevOps</a></li>
+          <li><a href="/?cat=ai">AI workflows</a></li>
         </ul>
       </nav>
       <nav aria-label="Company">

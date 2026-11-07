@@ -1,0 +1,92 @@
+<!--meta
+{
+  "slug": "agentic-workflows-itsm",
+  "section": "ai",
+  "kind": "Analysis",
+  "short_title": "Agentic workflows in ITSM",
+  "title": "Agentic workflows in ITSM: where automation helps and where it needs a human",
+  "description": "How to introduce AI agents into IT service management safely: an autonomy scale, mapping triage, runbooks and change approvals to it, the controls agents need, and how to stay auditable.",
+  "dek": "AI agents can now read a ticket, look up context and take action. The useful question isn't whether to let them, but how much autonomy each task deserves — and what controls make that autonomy safe to defend in an audit.",
+  "cover_label": "ITSM automation",
+  "keywords": ["ai agents", "agentic ai", "itsm", "service desk", "change management", "itil", "automation", "runbooks"],
+  "published": "2026-11-07",
+  "versions": [{"v": "1.0", "date": "2026-11-07", "note": "First published."}],
+  "changelog_summary": "Ticket triage, runbook execution and change approvals, mapped to an autonomy level you can defend in an audit.",
+  "takeaways": [
+    "Decide autonomy per task, not per tool: the same agent can draft one thing and act on another.",
+    "Low-risk, reversible, well-understood actions are the best first candidates for autonomous execution.",
+    "Map agent actions onto existing change types: only pre-approved standard changes should run without a human.",
+    "Give agents narrowly scoped credentials, log every action, and keep a working off switch.",
+    "Identity-sensitive actions such as password and MFA resets need strong verification, whoever performs them."
+  ],
+  "sources": [
+    {"title": "Change types: standard, normal and emergency (ServiceNow documentation)", "url": "https://www.servicenow.com/docs/r/xanadu/it-service-management/change-management/change-types.html"},
+    {"title": "OWASP Top 10 for Large Language Model Applications", "url": "https://genai.owasp.org/llm-top-10/"},
+    {"title": "AI Risk Management Framework (NIST)", "url": "https://www.nist.gov/itl/ai-risk-management-framework"},
+    {"title": "Change enablement in ITIL 4 (ITSM.tools)", "url": "https://itsm.tools/change-enablement/"}
+  ]
+}
+-->
+<p>IT service desks have automated simple tasks for years with scripts and workflow rules. What's new is software that can interpret an unstructured request, gather context from several systems, decide what to do and then do it. These AI agents can take on much more of the work, which makes it more important to decide carefully which work they should take.</p>
+
+<p>This guide offers a simple autonomy scale, maps common service management tasks onto it, and sets out the controls that make agent actions safe and auditable.</p>
+
+<h2 id="autonomy-scale">An autonomy scale for service management</h2>
+<p>Rather than deciding whether to "use agents", decide how much autonomy each task gets. Four levels cover most cases:</p>
+<div class="table-wrap">
+  <table>
+    <caption class="sr-only">Autonomy levels for AI agents in IT service management</caption>
+    <thead><tr><th scope="col">Level</th><th scope="col">What the agent does</th><th scope="col">Who is accountable</th></tr></thead>
+    <tbody>
+      <tr><td><strong>1. Suggest</strong></td><td>Recommends a category, a knowledge article or a next step; a person decides</td><td>The person</td></tr>
+      <tr><td><strong>2. Draft</strong></td><td>Prepares the action, such as a reply or a change request, for a person to approve and send</td><td>The approver</td></tr>
+      <tr><td><strong>3. Act within limits</strong></td><td>Carries out pre-approved, reversible actions on its own and records them</td><td>The owner of the pre-approved procedure</td></tr>
+      <tr><td><strong>4. Act and report</strong></td><td>Acts more broadly and informs people afterwards</td><td>Rarely appropriate in IT operations today</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>This scale is our own framing rather than an industry standard, but it maps neatly onto how service management already handles risk: some changes are pre-approved, most need approval, and some are emergencies.</p>
+
+<h2 id="mapping-tasks">Mapping common tasks</h2>
+<h3>Ticket triage and routing: level 3 is reasonable</h3>
+<p>Classifying tickets, setting priority from the description, spotting duplicates and routing to the right queue are high-volume, low-risk and easy to correct. A misrouted ticket costs minutes, not an outage. These are good first candidates for autonomous action, with agents' decisions sampled and reviewed each week.</p>
+<h3>Answering questions: level 2 or 3, depending on the topic</h3>
+<p>Answering "how do I connect to the VPN?" from the knowledge base can be autonomous if answers cite their sources and the user can escalate easily. Answers about HR, security or anything with legal weight are better drafted for an agent to send. Evaluate answer quality the same way you would any retrieval-based assistant.</p>
+<h3>Password and MFA resets: keep identity verification strong</h3>
+<p>Resets look like ideal automation candidates, and the mechanics are. But they are also a favourite route for social engineering: an attacker who convinces the service desk to reset someone's MFA has bypassed it. An agent doesn't remove that risk; it can scale it. Automate the reset itself only after strong, phishing-resistant identity verification, and route anything unusual — a privileged account, a new device, an unfamiliar location — to a person.</p>
+<h3>Runbook execution: level 3 only for standard changes</h3>
+<p>Restarting a stuck service, clearing a full disk, scaling a pool within set bounds: these are the kinds of action agents can execute well, if they are written down, reversible and pre-approved. Anything outside the runbook goes back to a person.</p>
+<h3>Change approval: humans stay accountable</h3>
+<p>Agents can do useful work on change requests: drafting them, checking them against policy, summarising the risk and the rollback plan, and flagging conflicts with other scheduled changes. The decision to approve a normal change should stay with a person or a change board, because someone has to be accountable for it.</p>
+<h3>Incident communication: level 2</h3>
+<p>Drafting status updates from incident timelines saves time during an outage. Have a person approve them before they reach customers or executives; a confident, wrong update during an incident does real damage.</p>
+
+<h2 id="change-types">Use the change types you already have</h2>
+<p>ITIL-based change practice already distinguishes how much scrutiny a change needs. In ServiceNow's documentation, for example, a <strong>standard change</strong> is a pre-authorised change that is low risk and relatively common; an <strong>emergency change</strong> must be implemented as soon as possible, for example to resolve a major incident; and a <strong>normal change</strong> is any change that is neither.</p>
+<p>This gives you a ready-made boundary for agents:</p>
+<ul>
+  <li><strong>Standard changes</strong> can be executed autonomously, because they were assessed and approved once, as a procedure. Each new procedure an agent may run should go through the same approval as any other standard change.</li>
+  <li><strong>Normal changes</strong> can be drafted and assessed by an agent, but approved by people.</li>
+  <li><strong>Emergency changes</strong> need human judgement under pressure. Agents can gather data and propose actions; a person decides.</li>
+</ul>
+<p>Using existing categories also helps with auditors: you can explain agent behaviour in terms the change process already defines.</p>
+
+<h2 id="controls">Controls every agent needs</h2>
+<ul>
+  <li><strong>Least-privilege credentials.</strong> Each agent gets its own identity with only the permissions its approved tasks need. Never reuse a human administrator's account or a broad service account.</li>
+  <li><strong>An allow-list of actions.</strong> Agents should call specific, approved tools, such as "restart service X", rather than having general shell or API access. The <a href="https://genai.owasp.org/llm-top-10/" rel="noopener" target="_blank">OWASP Top 10 for LLM applications</a> calls the opposite "excessive agency".</li>
+  <li><strong>Treat ticket content as untrusted input.</strong> A ticket can contain text written to manipulate the agent, a form of prompt injection. An agent reading a ticket must not be able to escalate its own permissions because of what the ticket says.</li>
+  <li><strong>Full audit logging.</strong> Record what the agent saw, what it decided, which tool it called with which parameters, and the result. Link each action to the ticket.</li>
+  <li><strong>Limits and an off switch.</strong> Rate-limit actions, cap how many systems an agent can touch in a period, and make sure someone on call can disable it immediately.</li>
+  <li><strong>Rollback for every action</strong> an agent can take autonomously. If an action can't be undone, it isn't a level 3 task.</li>
+</ul>
+
+<h2 id="rollout">Rolling it out</h2>
+<ol>
+  <li><strong>Start at level 1</strong> for a chosen queue, and compare the agent's suggestions with what people actually did.</li>
+  <li><strong>Move individual tasks up a level</strong> only when their suggestions have been consistently right, and the cost of a mistake is low.</li>
+  <li><strong>Review a sample of agent actions every week,</strong> including ones nobody complained about.</li>
+  <li><strong>Treat agent mistakes as incidents:</strong> record them, find the cause, and add a test or a control.</li>
+  <li><strong>Document the arrangement</strong> in your risk register: which tasks run at which level, who owns them, and when they are reviewed. NIST's <a href="https://www.nist.gov/itl/ai-risk-management-framework" rel="noopener" target="_blank">AI Risk Management Framework</a> is a helpful structure for this.</li>
+</ol>
+<p>The organisations that get the most from agents tend to be those that expand autonomy deliberately, one task at a time, with evidence for each step. That is also what makes the arrangement defensible when an auditor, or an incident review, asks why the agent was allowed to do what it did.</p>

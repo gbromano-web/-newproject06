@@ -1,0 +1,114 @@
+<!--meta
+{
+  "slug": "passkeys-enterprise-rollout",
+  "section": "security",
+  "kind": "Guide",
+  "short_title": "Passkeys in the enterprise",
+  "title": "Passkeys in the enterprise: rollout lessons for workforce identity",
+  "description": "How to roll out passkeys to employees: synced vs device-bound passkeys, what NIST SP 800-63B-4 allows, attestation and key restrictions, account recovery, and retiring SMS codes without overwhelming the help desk.",
+  "dek": "Passkeys finally give organisations a phishing-resistant sign-in that people don't hate. The hard parts of a rollout are policy choices — which passkeys to accept, for whom, and how people recover when they lose a device.",
+  "cover_label": "Workforce identity",
+  "keywords": ["passkeys", "fido2", "webauthn", "phishing-resistant mfa", "identity", "nist 800-63b", "entra id", "device-bound"],
+  "published": "2026-11-07",
+  "versions": [{"v": "1.0", "date": "2026-11-07", "note": "First published."}],
+  "changelog_summary": "Synced vs device-bound passkeys, what NIST SP 800-63B-4 allows, recovery flows, and retiring SMS codes without flooding the help desk.",
+  "takeaways": [
+    "Passkeys are phishing-resistant because each credential is bound to the site it was created for.",
+    "NIST SP 800-63B-4 allows synced passkeys at AAL2 but not AAL3; use device-bound passkeys where you need AAL3.",
+    "Use separate policies: synced passkeys for most staff, attested device-bound passkeys for administrators.",
+    "Design recovery before rollout; recovery is where attackers go once sign-in is phishing-resistant.",
+    "Retire SMS and other phishable methods in stages, starting with the groups that have already enrolled."
+  ],
+  "sources": [
+    {"title": "NIST SP 800-63B-4: Digital Identity Guidelines — Authentication and Authenticator Management (final, July 2025)", "url": "https://csrc.nist.gov/pubs/sp/800/63/B/4/final"},
+    {"title": "NIST SP 800-63B-4, Appendix B: Syncable authenticators", "url": "https://pages.nist.gov/800-63-4/sp800-63b/syncable"},
+    {"title": "Synced passkeys in Microsoft Entra ID (Microsoft Learn)", "url": "https://learn.microsoft.com/en-us/entra/identity/authentication/how-to-authentication-synced-passkeys"},
+    {"title": "Passkeys (FIDO Alliance)", "url": "https://fidoalliance.org/passkeys/"},
+    {"title": "More than a password: multifactor authentication (CISA)", "url": "https://www.cisa.gov/MFA"}
+  ]
+}
+-->
+<p>Most account takeovers in the workforce still start the same way: a convincing page collects a password and a one-time code, and an attacker replays them within seconds. Push notifications and SMS codes slowed this down, but they don't stop it, because a person can be tricked into approving or relaying them.</p>
+
+<p>Passkeys change the mechanics. This guide covers what makes them different, the policy decisions a rollout depends on, and the operational details — recovery, help desk and retiring old methods — where rollouts usually stall.</p>
+
+<h2 id="why-passkeys">Why passkeys resist phishing</h2>
+<p>A passkey is a FIDO credential: a key pair where the private key stays in an authenticator, such as a phone, a laptop's secure hardware, or a security key, and the public key is registered with the service. Signing in means proving possession of the private key, usually unlocked with a fingerprint, face or device PIN.</p>
+<p>Two properties make this phishing-resistant:</p>
+<ul>
+  <li><strong>The credential is bound to the site.</strong> The browser only allows a passkey to be used on the domain it was created for. A look-alike domain simply cannot request it.</li>
+  <li><strong>There is no shared secret to steal.</strong> Nothing the user types or reads can be replayed elsewhere, because the private key never leaves the authenticator.</li>
+</ul>
+<p>That is why passkeys are a phishing-resistant method in the sense used by CISA and NIST guidance, unlike SMS codes, authenticator app codes and simple push approvals.</p>
+
+<h2 id="synced-vs-device-bound">Synced versus device-bound passkeys</h2>
+<p>The first policy decision is which kinds of passkey to accept.</p>
+<div class="table-wrap">
+  <table>
+    <caption class="sr-only">Synced and device-bound passkeys compared</caption>
+    <thead><tr><th scope="col"></th><th scope="col">Synced passkeys</th><th scope="col">Device-bound passkeys</th></tr></thead>
+    <tbody>
+      <tr><td>Where the private key lives</td><td>Encrypted in a cloud passkey provider (for example iCloud Keychain or Google Password Manager) and available on the user's other devices</td><td>On one physical authenticator, such as a security key or an authenticator app, and never leaves it</td></tr>
+      <tr><td>Losing a device</td><td>The passkey survives on the user's other devices</td><td>The passkey is lost with the device; the user needs another registered method</td></tr>
+      <tr><td>Attestation (proof of the authenticator model)</td><td>Not supported</td><td>Supported by many security keys and authenticator apps</td></tr>
+      <tr><td>NIST assurance level</td><td>Up to AAL2</td><td>Can meet AAL3 with suitable hardware</td></tr>
+      <tr><td>Best fit</td><td>Most of the workforce</td><td>Administrators and other high-risk roles</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h3>What NIST now says</h3>
+<p>NIST's revised authentication guidelines, <a href="https://csrc.nist.gov/pubs/sp/800/63/B/4/final" rel="noopener" target="_blank">SP 800-63B-4</a>, published in final form in July 2025, include a normative appendix on syncable authenticators. In summary:</p>
+<ul>
+  <li>Synced passkeys <strong>can support AAL2</strong>, subject to requirements on the sync service: keys must be encrypted and protected by access controls, access to the sync account must itself be protected by AAL2-equivalent multi-factor authentication, and private-key operations must happen on the local device.</li>
+  <li>Synced passkeys <strong>cannot meet AAL3</strong>, because syncing violates the requirement that AAL3 keys be non-exportable.</li>
+  <li>For federal enterprise use, NIST expects the sync fabric to be controlled through agency-managed accounts, devices to be managed so keys can't sync to unauthorised places, and attestation to be used where the platform supports it.</li>
+</ul>
+<p>You are probably not a federal agency, but the enterprise requirements are a useful checklist: if synced passkeys live in employees' personal cloud accounts, the security of your sign-in depends partly on how well they protect those accounts.</p>
+
+<h2 id="policy">Turning that into policy</h2>
+<p>Most identity providers now let you apply different passkey rules to different groups. In Microsoft Entra ID, for example, passkey profiles let you scope settings to groups, including whether attestation is enforced at registration, which passkey types are allowed, and which authenticator models (identified by their AAGUID) are permitted. Microsoft's own example places IT administrators, executives and engineering in a profile that only allows device-bound passkeys with attestation enforced.</p>
+<p>A workable starting policy for most organisations:</p>
+<div class="table-wrap">
+  <table>
+    <caption class="sr-only">Suggested passkey policy by user group</caption>
+    <thead><tr><th scope="col">Group</th><th scope="col">Accepted passkeys</th><th scope="col">Attestation</th></tr></thead>
+    <tbody>
+      <tr><td>Most employees</td><td>Synced or device-bound</td><td>Not required</td></tr>
+      <tr><td>Privileged administrators</td><td>Device-bound only (security key or managed authenticator app)</td><td>Enforced, with an allow-list of approved models</td></tr>
+      <tr><td>Executives and finance approvers</td><td>Device-bound, or synced on managed devices only</td><td>Enforced where available</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>Two details matter. First, attestation is checked when a passkey is registered, so turning enforcement on later doesn't retroactively block passkeys that were registered without it. Decide before you enrol administrators. Second, without attestation, an allow-list of authenticator models is a guide rather than a hard control, because the service can't verify the model it's told.</p>
+
+<h2 id="recovery">Design recovery first</h2>
+<p>Once sign-in is phishing-resistant, attackers move to the weakest remaining path: account recovery. If anyone can call the help desk, answer two questions and have a new passkey registered, the passkey rollout has moved the risk rather than removed it.</p>
+<ul>
+  <li><strong>Encourage two credentials per person,</strong> for example a synced passkey plus a device-bound one, so losing a phone isn't a help desk event.</li>
+  <li><strong>Use a time-limited bootstrap credential</strong> for enrolment and recovery, issued only after strong identity verification. In Entra ID this is a Temporary Access Pass; other providers have equivalents.</li>
+  <li><strong>Verify identity properly at the help desk:</strong> a video call against a known photo, a manager's confirmation through a separate channel, or an identity verification service. Never verify with information an attacker could find or phish.</li>
+  <li><strong>Treat recovery of privileged accounts as a two-person process,</strong> with an alert to the security team every time it happens.</li>
+</ul>
+
+<h2 id="rollout">A rollout plan that keeps the help desk calm</h2>
+<ol>
+  <li><strong>Pilot with IT and security staff.</strong> Use the pilot to write the help desk runbook and find device and browser combinations that cause trouble.</li>
+  <li><strong>Enrol administrators on device-bound passkeys</strong> with attestation enforced, and require passkeys for privileged roles first. This is where phishing-resistant sign-in delivers the most risk reduction.</li>
+  <li><strong>Open self-service enrolment to everyone,</strong> prompted at sign-in, while existing methods continue to work.</li>
+  <li><strong>Require passkeys for access to sensitive applications</strong> through conditional access, group by group, once most of each group has enrolled.</li>
+  <li><strong>Retire phishable methods,</strong> starting with SMS and voice codes for groups that have fully enrolled.</li>
+</ol>
+<p>Measure enrolment by group weekly, and only move a group to enforcement when nearly everyone in it has registered at least one passkey. Enforcing too early is what floods help desks.</p>
+
+<h2 id="retiring-sms">Retiring SMS codes</h2>
+<p>NIST has treated SMS and voice codes as a restricted authenticator since SP 800-63B revision 3, and they remain vulnerable to SIM swapping, number porting and real-time phishing. They are also often the last fallback method left enabled "just in case", which makes them the path attackers choose.</p>
+<p>Removing them is mostly a sequencing problem. Disable SMS for a group only after its members have a passkey and a recovery path that doesn't depend on SMS, keep a documented exception process for the few people who genuinely can't use a passkey yet, and report the number of exceptions to leadership so it keeps falling.</p>
+
+<h2 id="pitfalls">Common pitfalls</h2>
+<ul>
+  <li><strong>Shared and kiosk devices.</strong> Passkeys on personal phones don't suit shared workstations. Use security keys or cross-device sign-in for these cases.</li>
+  <li><strong>Legacy applications</strong> that only support passwords. Put them behind your identity provider with single sign-on, so the passkey protects the front door even if the application can't use it directly.</li>
+  <li><strong>Assuming synced means device-bound.</strong> Without attestation, your identity provider can't tell what kind of authenticator created a passkey. Treat unattested passkeys accordingly.</li>
+  <li><strong>Forgetting non-employees.</strong> Contractors and partners often keep the weakest methods longest. Include them in the plan and the timeline.</li>
+</ul>

@@ -9,7 +9,7 @@ HITS=$(grep -RInE "$PATTERN" --include='*.html' --include='*.js' --include='*.tx
 
 # Every page must link the privacy policy, and ads.txt must exist (AdSense requirements)
 MISSING=""
-for f in index.html article-template.html about.html contact.html privacy.html terms.html 404.html; do
+for f in index.html about.html contact.html privacy.html terms.html 404.html $(find . -path "./*/*/index.html" | sed "s#^./##"); do
   [ -f "$f" ] || { MISSING="$MISSING\n  missing file: $f"; continue; }
   grep -q 'href="/privacy.html"' "$f" || MISSING="$MISSING\n  no privacy link: $f"
 done

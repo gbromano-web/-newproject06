@@ -1,0 +1,102 @@
+<!--meta
+{
+  "slug": "saas-security-procurement-checklist",
+  "section": "saas",
+  "kind": "Buyer's guide",
+  "short_title": "SaaS procurement checklist",
+  "title": "SSO tax, SCIM, and audit logs: the SaaS procurement checklist for security teams",
+  "description": "Twelve security questions to settle before signing a SaaS contract — single sign-on, SCIM provisioning, audit logs, data residency, exit terms — and which ones vendors often reserve for their enterprise tier.",
+  "dek": "The cheapest time to get a security requirement into a SaaS contract is before you sign it. These twelve questions cover identity, logging, data and exit terms, with the answers that should make you pause.",
+  "cover_label": "SaaS procurement",
+  "keywords": ["saas", "sso", "sso tax", "scim", "audit logs", "procurement", "vendor security", "soc 2", "identity"],
+  "published": "2026-11-07",
+  "start_here": true,
+  "versions": [{"v": "1.0", "date": "2026-11-07", "note": "First published."}],
+  "changelog_summary": "Twelve questions to settle before you sign, and which ones vendors quietly reserve for their enterprise tier.",
+  "takeaways": [
+    "Ask which plan includes SSO, SCIM and audit log export before comparing prices; they often sit only in the top tier.",
+    "SCIM deprovisioning matters more than provisioning: it is what removes access when people leave.",
+    "Audit logs are only useful if you can export them to your SIEM and they are kept long enough to investigate.",
+    "Get exit terms in writing: data export format, deletion confirmation and a timeline.",
+    "Score every vendor on the same questions so security trade-offs are visible next to price."
+  ],
+  "sources": [
+    {"title": "RFC 7643: System for Cross-domain Identity Management (SCIM) core schema (IETF)", "url": "https://www.rfc-editor.org/rfc/rfc7643"},
+    {"title": "RFC 7644: SCIM protocol (IETF)", "url": "https://www.rfc-editor.org/rfc/rfc7644"},
+    {"title": "Explaining the backlash to the SSO tax (1Password)", "url": "https://1password.com/blog/explaining-the-backlash-to-the-sso-tax"},
+    {"title": "Secure by Design (CISA)", "url": "https://www.cisa.gov/securebydesign"},
+    {"title": "SOC 2 — SOC for Service Organizations: Trust Services Criteria (AICPA)", "url": "https://www.aicpa-cima.com/topic/audit-assurance/audit-and-assurance-greater-than-soc-2"}
+  ]
+}
+-->
+<p>Every SaaS tool your organisation adopts adds accounts to manage, data to protect and another place an incident can start. Security teams usually see a new tool after it has been chosen, when the only leverage left is to delay the purchase. The questions that matter most are far easier to settle before a contract is signed, while the vendor still wants the deal.</p>
+
+<p>This checklist covers twelve questions in four groups: identity, logging, data, and exit. For each, it explains why the question matters and which answers should make you pause.</p>
+
+<h2 id="sso-tax">The SSO tax, and why tier matters</h2>
+<p>Many SaaS vendors put single sign-on, and often other security features, only in their most expensive plan. Critics call this the "SSO tax": an organisation that wants employees to sign in through its own identity provider, with its MFA and offboarding, has to pay for an enterprise tier it may not otherwise need.</p>
+<p>Vendors argue that enterprise features cost more to build and support. Security teams counter that single sign-on is a baseline control, not a premium extra. Whatever your view, the practical consequence is the same: <strong>compare plans on the security features you need, not on headline price</strong>. A cheaper plan without SSO means separate passwords, separate MFA and manual offboarding for that tool, which is a cost the security and IT teams carry instead.</p>
+<p>Ask the vendor to confirm in writing which plan includes each item below.</p>
+
+<h2 id="identity">Identity and access: questions 1 to 4</h2>
+<h3>1. Do you support SSO with our identity provider, and on which plan?</h3>
+<p>Expect SAML 2.0 or OpenID Connect support and documented setup for major identity providers. Also ask whether SSO can be <em>enforced</em>, so local passwords are disabled for your users. SSO that users can bypass with a password doesn't give you central control.</p>
+<p><strong>Pause if:</strong> SSO is only on a tier far above what you need, or it can't be enforced.</p>
+<h3>2. Do you support SCIM for provisioning and deprovisioning?</h3>
+<p>SCIM, the System for Cross-domain Identity Management, is the open standard (<a href="https://www.rfc-editor.org/rfc/rfc7644" rel="noopener" target="_blank">RFC 7644</a> for the protocol, <a href="https://www.rfc-editor.org/rfc/rfc7643" rel="noopener" target="_blank">RFC 7643</a> for the schema) that lets your identity provider create, update and remove accounts automatically. Deprovisioning is the important half: when someone leaves, their access should end everywhere within minutes, not when someone remembers to remove it.</p>
+<p>Ask whether SCIM supports group membership as well as users, because roles in the application should follow groups in your directory.</p>
+<p><strong>Pause if:</strong> there is no SCIM, or deprovisioning only suspends accounts in a way that still lets API tokens or sessions work.</p>
+<h3>3. Can we enforce MFA and session limits?</h3>
+<p>With SSO enforced, MFA comes from your identity provider. Still ask about session length, idle timeouts, and whether existing sessions are revoked when an account is deprovisioned.</p>
+<h3>4. How granular are roles and admin permissions?</h3>
+<p>Look for least-privilege roles, separation between billing administrators and security administrators, and the ability to restrict who can create API tokens or install integrations.</p>
+<p><strong>Pause if:</strong> there are only "admin" and "user" roles in a tool that will hold sensitive data.</p>
+
+<h2 id="logging">Audit logs: questions 5 to 7</h2>
+<h3>5. What events are logged?</h3>
+<p>At minimum: sign-ins, failed sign-ins, admin and permission changes, data exports, API token creation and use, and changes to integrations. Ask for the event reference documentation, not a summary.</p>
+<h3>6. How long are logs kept, and can we export them?</h3>
+<p>Logs that are visible only in the vendor's web interface, for 30 days, are of limited use in an investigation that starts weeks after an intrusion. Ask for an API or a streaming export your SIEM can consume, and whether either costs extra.</p>
+<p><strong>Pause if:</strong> log export is only available on a higher tier, or retention is too short to cover your investigation window.</p>
+<h3>7. Will you notify us of a security incident, and how fast?</h3>
+<p>Get a notification commitment, with a timeframe, into the contract or data processing agreement. It should cover incidents affecting your data, not only confirmed breaches.</p>
+
+<h2 id="data">Data protection: questions 8 to 10</h2>
+<h3>8. Where is our data stored and processed?</h3>
+<p>Ask for the regions where data is stored, where support staff can access it from, and the list of subprocessors. If you have residency requirements, confirm they apply to backups and logs as well as primary storage.</p>
+<h3>9. What independent assurance do you have?</h3>
+<p>A SOC 2 Type II report or ISO/IEC 27001 certification shows that controls were independently assessed. Read the report rather than accepting a logo: check its scope covers the product you are buying, the period is recent, and note any exceptions the auditor recorded.</p>
+<h3>10. How is our data protected from other customers and from your staff?</h3>
+<p>Ask about tenant isolation, encryption at rest and in transit, whether customer-managed keys are available, and how employee access to customer data is approved and logged.</p>
+
+<h2 id="exit">Exit and integrations: questions 11 and 12</h2>
+<h3>11. How do we get our data out, and how do you delete it?</h3>
+<p>Settle the export format, how complete the export is, and how long you have after termination to retrieve it. Ask for written confirmation of deletion, including from backups, within a stated period.</p>
+<p><strong>Pause if:</strong> export is "available on request" with no format or timeline.</p>
+<h3>12. How are integrations and API tokens controlled?</h3>
+<p>Third-party integrations and long-lived API tokens are a common route into SaaS data. Ask whether admins can approve integrations before users install them, whether tokens can be scoped and set to expire, and whether token use appears in the audit log.</p>
+
+<h2 id="scorecard">A scorecard you can reuse</h2>
+<p>Score every shortlisted vendor on the same twelve questions. Mark each answer as meets, partly meets or doesn't meet, note the plan required, and put the table next to the price comparison. This makes the real trade-off visible: a cheaper plan often means accepting gaps the security team will have to manage.</p>
+<div class="table-wrap">
+  <table>
+    <caption class="sr-only">Vendor scorecard template</caption>
+    <thead><tr><th scope="col">Question</th><th scope="col">Vendor A</th><th scope="col">Plan required</th><th scope="col">Vendor B</th><th scope="col">Plan required</th></tr></thead>
+    <tbody>
+      <tr><td>1. Enforceable SSO</td><td>Meets</td><td>Enterprise</td><td>Meets</td><td>Business</td></tr>
+      <tr><td>2. SCIM with groups</td><td>Meets</td><td>Enterprise</td><td>Partly meets</td><td>Business</td></tr>
+      <tr><td>6. Audit log export to SIEM</td><td>Meets</td><td>Enterprise</td><td>Doesn't meet</td><td>—</td></tr>
+      <tr><td>11. Export and deletion terms</td><td>Meets</td><td>All plans</td><td>Partly meets</td><td>All plans</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>The rows above are an illustrative example of how the table reads, not an assessment of real products.</p>
+<p>CISA's <a href="https://www.cisa.gov/securebydesign" rel="noopener" target="_blank">Secure by Design</a> programme is a useful reference when discussing these gaps with vendors: it asks software makers to treat protections such as MFA and the logging customers need to detect intrusions as standard, not optional extras.</p>
+
+<h2 id="negotiating">Negotiating the gaps</h2>
+<ul>
+  <li><strong>Ask for security features to be unbundled</strong> from the enterprise tier, or for an SSO and SCIM add-on at a fixed price.</li>
+  <li><strong>Make security commitments contractual.</strong> Incident notification, log retention and deletion timelines belong in the agreement, not in a sales email.</li>
+  <li><strong>Time your requests.</strong> You have the most leverage before signature and at renewal. Put renewal dates for important tools in the security team's calendar too.</li>
+  <li><strong>Record accepted risks.</strong> If you sign without a control, document who accepted the gap and when it will be revisited.</li>
+</ul>

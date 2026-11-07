@@ -4,11 +4,6 @@
   # For a preview, set ALLOW_PLACEHOLDERS=1 in Site settings → Environment variables.
   command = "sh scripts/preflight.sh"
 
-[[redirects]]
-  from = "/cybersecurity/zero-trust-aws-replace-vpn/"
-  to = "/article-template.html"
-  status = 200
-
 [[headers]]
   for = "/*"
   [headers.values]

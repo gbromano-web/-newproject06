@@ -1,0 +1,130 @@
+<!--meta
+{
+  "slug": "terraform-state-at-scale",
+  "section": "devops",
+  "kind": "Guide",
+  "short_title": "Terraform state at scale",
+  "title": "Terraform state at scale: remote backends, locking, and drift detection",
+  "description": "How to organise Terraform state for a growing estate: splitting state by blast radius, S3 backends with native lockfile locking, migrating off DynamoDB locks, and detecting drift in CI.",
+  "dek": "One state file works until it doesn't: plans slow down, locks collide, and a single mistake can touch everything. Here is how to split state by blast radius, lock it safely, and catch drift before an incident does.",
+  "cover_label": "Terraform state",
+  "keywords": ["terraform", "infrastructure as code", "iac", "state", "s3 backend", "state locking", "use_lockfile", "drift detection"],
+  "published": "2026-11-07",
+  "versions": [{"v": "1.0", "date": "2026-11-07", "note": "First published."}],
+  "changelog_summary": "Splitting state by blast radius, S3 native lockfile locking, migrating off DynamoDB, and catching drift in CI.",
+  "takeaways": [
+    "Split state so that one plan can only damage one bounded part of your estate.",
+    "The S3 backend now supports native locking with use_lockfile; DynamoDB-based locking is deprecated.",
+    "Enable bucket versioning and encryption on the state bucket, and restrict who can read state.",
+    "Share values between states through outputs or a parameter store, not by reaching into other states casually.",
+    "Run scheduled plans with -detailed-exitcode to detect drift, and route drift to the owning team."
+  ],
+  "sources": [
+    {"title": "S3 backend configuration (HashiCorp Terraform documentation)", "url": "https://developer.hashicorp.com/terraform/language/backend/s3"},
+    {"title": "Terraform v1.10 upgrade notes: S3 native state locking (HashiCorp)", "url": "https://developer.hashicorp.com/terraform/language/v1.10.x/upgrade-guides"},
+    {"title": "terraform plan command reference (HashiCorp)", "url": "https://developer.hashicorp.com/terraform/cli/commands/plan"},
+    {"title": "State (HashiCorp Terraform documentation)", "url": "https://developer.hashicorp.com/terraform/language/state"}
+  ]
+}
+-->
+<p>Terraform state is the record of which real resources Terraform manages and how they map to your configuration. Early on, one state file per environment is fine. As an estate grows, the same layout starts to hurt: plans take minutes, two teams collide on the same lock, and every apply carries the risk of touching resources nobody meant to change.</p>
+
+<p>This guide covers how to split state, how to configure a remote backend with locking, how to migrate off the older DynamoDB locking, and how to detect drift. Examples use the S3 backend because it is the most common; the principles apply to other backends.</p>
+
+<h2 id="blast-radius">Split state by blast radius</h2>
+<p>The question to ask of any state boundary is: <em>if an apply in this state goes wrong, what is the worst it can break?</em> A single state holding the network, the databases and every application can break all of them at once. Smaller states limit the damage, speed up plans and reduce lock contention.</p>
+<p>Good boundaries usually follow three things:</p>
+<ul>
+  <li><strong>Lifecycle.</strong> Things that change rarely, such as network foundations and DNS zones, should not share state with things that change daily, such as application services.</li>
+  <li><strong>Ownership.</strong> Each state should have one owning team. Shared ownership is how locks collide and reviews get skipped.</li>
+  <li><strong>Environment and region.</strong> Production and non-production never share state, and multi-region estates usually separate state per region.</li>
+</ul>
+
+<figure class="figure">
+  <div class="diagram">
+<pre><code>live/
+├── prod/
+│   ├── eu-west-1/
+│   │   ├── network/      # VPCs, subnets, transit (platform team)
+│   │   ├── data/         # databases, buckets (data team)
+│   │   └── services/
+│   │       ├── payments/ # one state per service (owning team)
+│   │       └── search/
+│   └── global/
+│       └── dns/          # hosted zones (platform team)
+└── staging/
+    └── eu-west-1/ ...</code></pre>
+  </div>
+  <figcaption>One state per directory: separated by environment, region, lifecycle and owner.</figcaption>
+</figure>
+<p>Don't go too far the other way. Hundreds of tiny states each holding two resources create their own overhead: dependency ordering across states becomes a manual process. Aim for states that one team can plan in under a minute or two and reason about in one review.</p>
+
+<h2 id="backend">Configure the remote backend</h2>
+<p>Remote state belongs in a dedicated, tightly controlled bucket, never in version control: state can contain secrets such as database passwords and generated keys, in plain text.</p>
+<pre><code>terraform {
+  backend "s3" {
+    bucket       = "acme-tfstate-prod"
+    key          = "prod/eu-west-1/network/terraform.tfstate"
+    region       = "eu-west-1"
+    encrypt      = true
+    kms_key_id   = "arn:aws:kms:eu-west-1:111122223333:key/EXAMPLE-KEY-ID"
+    use_lockfile = true
+  }
+}</code></pre>
+<p>What each security-relevant setting does:</p>
+<ul>
+  <li><code>encrypt</code> enables server-side encryption of the state file and lock file; <code>kms_key_id</code> uses your own KMS key, so access to state also requires permission on that key.</li>
+  <li><code>use_lockfile</code> turns on S3 native state locking, described below.</li>
+  <li>The key path mirrors the directory layout, so it is obvious which configuration owns which state.</li>
+</ul>
+<p>Two settings live on the bucket rather than in Terraform. HashiCorp highly recommends enabling <strong>bucket versioning</strong>, so a corrupted or accidentally deleted state can be recovered. And the bucket policy should limit read access to the pipelines and people who need it, because anyone who can read state can read whatever secrets it contains.</p>
+
+<h2 id="locking">State locking with use_lockfile</h2>
+<p>Locking stops two runs from writing the same state at once, which would corrupt it. Historically the S3 backend needed a DynamoDB table for this. Terraform 1.10 introduced native S3 locking as an opt-in feature: with <code>use_lockfile = true</code>, Terraform creates a lock file next to the state file, with the same name and a <code>.tflock</code> extension.</p>
+<p>The S3 backend documentation now states that DynamoDB-based locking is deprecated and will be removed in a future minor version. New backends should use <code>use_lockfile</code>.</p>
+<p>The lock file needs IAM permissions of its own. The principal running Terraform needs <code>s3:GetObject</code>, <code>s3:PutObject</code> and <code>s3:DeleteObject</code> on the <code>.tflock</code> object, in addition to its permissions on the state file. A bucket policy that only allows access to <code>*.tfstate</code> objects will make every run fail to acquire a lock.</p>
+
+<h3>Migrating off DynamoDB locking</h3>
+<p>You can migrate without downtime, because the backend supports both mechanisms at once. When both are configured, Terraform acquires a lock from both before proceeding, so runs on old and new configurations still exclude each other.</p>
+<ol>
+  <li>Grant the lock file permissions above to every pipeline and role that runs Terraform.</li>
+  <li>Add <code>use_lockfile = true</code> alongside the existing <code>dynamodb_table</code> setting, and run <code>terraform init -reconfigure</code>.</li>
+  <li>Once every pipeline and engineer is on the new configuration, remove <code>dynamodb_table</code> and re-initialise.</li>
+  <li>Keep the DynamoDB table until you've confirmed nothing still references it, then delete it.</li>
+</ol>
+
+<h2 id="sharing">Sharing values between states</h2>
+<p>Split state creates a new question: how does the payments service find the network's subnet IDs? There are three common patterns:</p>
+<div class="table-wrap">
+  <table>
+    <caption class="sr-only">Ways to share values between Terraform states</caption>
+    <thead><tr><th scope="col">Pattern</th><th scope="col">How it works</th><th scope="col">Trade-off</th></tr></thead>
+    <tbody>
+      <tr><td>Remote state data source</td><td>The consumer reads the producer's outputs with <code>terraform_remote_state</code></td><td>Simple, but the consumer needs read access to the producer's whole state, secrets included</td></tr>
+      <tr><td>Parameter store</td><td>The producer writes chosen values to a store such as SSM Parameter Store; consumers read only those</td><td>Least privilege and explicit contracts; one extra resource to manage</td></tr>
+      <tr><td>Provider lookups</td><td>The consumer finds resources by tag or name with data sources</td><td>No coupling to the producer's state, but lookups can silently match the wrong resource</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>For larger estates, the parameter store pattern tends to hold up best, because it treats each published value as an interface and avoids granting broad read access to state.</p>
+
+<h2 id="drift">Detect drift before it detects you</h2>
+<p>Drift is any difference between the real infrastructure and what the state and configuration expect: a security group rule added in the console during an incident, a tag changed by a script, a resource deleted by hand. Drift is dangerous because the next apply may undo an emergency fix, or fail halfway through.</p>
+<p>The simplest reliable detector is a scheduled plan in CI. The <code>-detailed-exitcode</code> flag makes <code>terraform plan</code> return exit code 0 when there are no changes, 1 on error, and 2 when changes are present. Capture the code explicitly, because most CI shells stop at the first non-zero exit:</p>
+<pre><code>terraform init -input=false
+status=0
+terraform plan -input=false -lock=false -detailed-exitcode -out=drift.tfplan || status=$?
+if [ "$status" -eq 2 ]; then
+  echo "Drift detected"   # post the plan summary to the owning team's channel
+fi
+exit $(( status == 1 ))   # fail the job only on real errors</code></pre>
+<p>Run it against every state on a schedule, nightly for production. Using <code>-lock=false</code> keeps the read-only check from blocking real deployments; it never applies anything. For changes made outside Terraform that you want to accept rather than revert, <code>terraform plan -refresh-only</code> shows how the state would be updated to match reality.</p>
+<p>Route each drift report to the team that owns that state. A drift report that goes to a shared channel nobody reads is the same as no detection at all.</p>
+
+<h2 id="operating">Operating rules worth writing down</h2>
+<ul>
+  <li><strong>Applies happen in CI, not on laptops,</strong> so every change has a reviewed plan and an audit trail.</li>
+  <li><strong>Nobody edits state by hand</strong> except through <code>terraform state</code> commands, after a backup, with a second person present.</li>
+  <li><strong>Console changes in production are incidents.</strong> If someone must make one, they open a ticket to bring Terraform back in line.</li>
+  <li><strong>Pin provider and Terraform versions</strong> in each configuration, and upgrade one state at a time.</li>
+</ul>

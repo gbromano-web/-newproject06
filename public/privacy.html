@@ -6,19 +6,31 @@
   <title>Privacy Policy — TechStack Lab</title>
   <meta name="description" content="How TechStack Lab collects, uses and protects personal data, including Google AdSense advertising cookies, the DoubleClick cookie, and your GDPR and CCPA rights.">
   <link rel="canonical" href="https://techstacklab.site/privacy.html">
-  <meta name="theme-color" content="#2456e8">
+  <meta name="theme-color" content="#0f766e">
+  <meta name="robots" content="index, follow, max-image-preview:large">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="TechStack Lab">
   <meta property="og:title" content="Privacy Policy — TechStack Lab">
   <meta property="og:description" content="How TechStack Lab collects, uses and protects personal data, including Google AdSense advertising cookies, the DoubleClick cookie, and your GDPR and CCPA rights.">
   <meta property="og:url" content="https://techstacklab.site/privacy.html">
+  <meta property="og:image" content="https://techstacklab.site/assets/og-default.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='28' height='28' rx='7' fill='%232456e8'/%3E%3Cpath d='M9 11h14M9 16h10M9 21h6' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+
+  <!-- Theme set before paint (prevents flash) -->
   <script>(function(){try{var t=localStorage.getItem('tsl-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+
+  <!-- Google AdSense site verification (the ad library itself is lazy-loaded by adsense-config.js) -->
   <meta name="google-adsense-account" content="ca-pub-XXXXXXXXXXXXXXXX">
+
+  <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
   <link rel="preload" href="/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/ibm-plex-sans-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="alternate" type="application/rss+xml" title="TechStack Lab — new and updated guides" href="/feed.xml">
   <link rel="stylesheet" href="/styles.css">
+
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -33,7 +45,16 @@
     "@id": "https://techstacklab.site/#organization",
     "name": "TechStack Lab",
     "url": "https://techstacklab.site/",
-    "email": "support@techstacklab.com"
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://techstacklab.site/assets/logo-600x60.png",
+      "width": 600,
+      "height": 60
+    },
+    "email": "gbromano.5bdf@gmail.com",
+    "publishingPrinciples": "https://techstacklab.site/about.html#editorial",
+    "correctionsPolicy": "https://techstacklab.site/about.html#corrections",
+    "actionableFeedbackPolicy": "https://techstacklab.site/contact.html"
   }
 }
   </script>
@@ -44,18 +65,18 @@
   <!-- ===================== HEADER ===================== -->
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="/index.html" aria-label="TechStack Lab home">
+      <a class="brand" href="/" aria-label="TechStack Lab home">
         <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="7" fill="var(--accent)"/><path d="M9 11h14M9 16h10M9 21h6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
         <span class="brand-name">TechStack <span>Lab</span></span>
       </a>
 
       <nav class="primary-nav" id="primaryNav" aria-label="Primary">
         <ul>
-          <li><a href="/index.html?cat=cloud" data-nav-cat="cloud">Cloud architecture</a></li>
-          <li><a href="/index.html?cat=security" data-nav-cat="security">Cybersecurity</a></li>
-          <li><a href="/index.html?cat=saas" data-nav-cat="saas">SaaS tools</a></li>
-          <li><a href="/index.html?cat=devops" data-nav-cat="devops">DevOps</a></li>
-          <li><a href="/index.html?cat=ai" data-nav-cat="ai">AI workflows</a></li>
+          <li><a href="/?cat=cloud" data-cat-link="cloud">Cloud architecture</a></li>
+          <li><a href="/?cat=security" data-cat-link="security">Cybersecurity</a></li>
+          <li><a href="/?cat=saas" data-cat-link="saas">SaaS tools</a></li>
+          <li><a href="/?cat=devops" data-cat-link="devops">DevOps</a></li>
+          <li><a href="/?cat=ai" data-cat-link="ai">AI workflows</a></li>
         </ul>
       </nav>
 
@@ -69,7 +90,7 @@
         </button>
       </div>
 
-      <form class="search" role="search" action="/index.html" method="get" id="siteSearch">
+      <form class="search" role="search" action="/" method="get" id="siteSearch">
         <label for="q" class="sr-only">Search TechStack Lab</label>
         <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input id="q" name="q" type="search" placeholder="Search guides, tools, topics…" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="searchResults" aria-expanded="false">
@@ -80,10 +101,10 @@
 
   <main id="main" class="page">
     <div class="container">
-      <header class="page-header">
+<header class="page-header">
         <p class="eyebrow">Legal</p>
         <h1 class="page-title">Privacy Policy</h1>
-        <p class="effective">Effective date: October 29, 2026 · Last updated: October 29, 2026</p>
+        <p class="effective">Effective date: November 7, 2026 · Last updated: November 7, 2026</p>
       </header>
 
       <!-- Template notice: have this reviewed by a qualified lawyer for your jurisdiction before publishing. -->
@@ -91,17 +112,17 @@
         <p>This Privacy Policy explains how TechStack Lab (“TechStack Lab”, “we”, “us”) collects, uses and shares information when you visit <strong>techstacklab.site</strong> (the “Site”). We aim to collect as little personal data as possible and to be clear about the data that third parties, especially advertising partners, collect.</p>
 
         <h2 id="controller">1. Who is responsible for your data</h2>
-        <p>TechStack Lab is the data controller for personal data processed through the Site. Contact: <a href="mailto:support@techstacklab.com">support@techstacklab.com</a>. <!-- REPLACE: add legal entity name and registered address --></p>
+        <p>TechStack Lab, an independent publication based in the United Arab Emirates, is the data controller for personal data processed through the Site. Contact: <a href="mailto:gbromano.5bdf@gmail.com">gbromano.5bdf@gmail.com</a>.</p>
 
         <h2 id="data-we-collect">2. Information we collect</h2>
         <h3>Information you give us</h3>
         <ul>
-          <li><strong>Contact form and email:</strong> your name, email address, topic and message content.</li>
-          <li><strong>Newsletter:</strong> your email address and subscription preferences, if you subscribe. The sign-up form is submitted securely and your address is never placed in page URLs.</li>
+          <li><strong>Contact form and email:</strong> our contact form does not send anything to a server. It opens your own email app with your message ready to send, so we receive only what you choose to email us: typically your name, email address, topic and message.</li>
+          <li><strong>Newsletter:</strong> if you send us a subscribe request, the email address you send it from.</li>
         </ul>
         <h3>Information collected automatically</h3>
         <ul>
-          <li><strong>Technical data:</strong> IP address, browser type, device type, operating system, referring page, pages visited and timestamps, collected in server logs by our hosting provider for security and reliability.</li>
+          <li><strong>Technical data:</strong> IP address, browser type, device type, operating system, referring page, pages visited and timestamps, collected in server logs by our hosting provider. The Site is hosted on GitHub Pages; GitHub logs the IP address of visitors for security purposes, as described in <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages#data-collection" rel="noopener" target="_blank">GitHub's documentation</a> and the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener" target="_blank">GitHub Privacy Statement</a>.</li>
           <li><strong>Cookies and similar technologies:</strong> described in section 4. Non-essential cookies are only set with your consent where the law requires it.</li>
         </ul>
         <p>We do not knowingly collect special categories of personal data, and we do not ask for payment information.</p>
@@ -149,14 +170,14 @@
         <h2 id="sharing">5. How we share information</h2>
         <p>We do not sell your personal information for money. We share data only with:</p>
         <ul>
-          <li><strong>Service providers</strong> who host the Site, deliver email and process form submissions on our behalf, under contracts that limit their use of the data.</li>
+          <li><strong>Service providers</strong> who host the Site (GitHub Pages) and provide our email service (Google Gmail), under their own terms and privacy policies.</li>
           <li><strong>Advertising partners</strong>, including Google, as described in section 4, based on your choices.</li>
           <li><strong>Authorities</strong> where required by law or to protect our rights and users.</li>
         </ul>
 
         <h2 id="gdpr">6. Your rights under the GDPR and UK GDPR</h2>
         <p>If you are in the EEA, UK or Switzerland, you have the right to: access your personal data; correct inaccurate data; request deletion; restrict or object to processing, including processing based on legitimate interests; data portability; and withdraw consent at any time without affecting earlier processing. You also have the right to lodge a complaint with your local data protection authority.</p>
-        <p>To exercise these rights, email <a href="mailto:support@techstacklab.com">support@techstacklab.com</a> or use the <a href="/contact.html?topic=privacy">privacy request form</a>. We respond within one month.</p>
+        <p>To exercise these rights, email <a href="mailto:gbromano.5bdf@gmail.com">gbromano.5bdf@gmail.com</a> or use the <a href="/contact.html?topic=privacy">privacy request form</a>. We respond within one month.</p>
 
         <h2 id="ccpa">7. Your rights under the CCPA/CPRA (California) and other US state laws</h2>
         <p>If you are a resident of California or another US state with a comprehensive privacy law, you have the right to:</p>
@@ -168,14 +189,14 @@
           <li>Not be discriminated against for exercising these rights.</li>
         </ul>
         <p>Advertising cookies set by third parties on the Site may be considered “sharing” under California law. To opt out, select “Reject non-essential” or turn off “Ad personalization” in <button class="link-btn" type="button" data-open-consent>Cookie settings</button>. We honor Global Privacy Control (GPC) browser signals as a valid opt-out request. In the past 12 months, the categories collected are identifiers (such as IP address and email), internet activity, and inferences used for advertising.</p>
-        <p>To submit a request, email <a href="mailto:support@techstacklab.com">support@techstacklab.com</a> with the subject “Privacy request”. We will verify your request and respond within 45 days. You may use an authorized agent.</p>
+        <p>To submit a request, email <a href="mailto:gbromano.5bdf@gmail.com">gbromano.5bdf@gmail.com</a> with the subject “Privacy request”. We will verify your request and respond within 45 days. You may use an authorized agent.</p>
 
         <h2 id="uae">8. Residents of the United Arab Emirates</h2>
         <p>If you are in the UAE, the Federal Decree-Law No. 45 of 2021 on the Protection of Personal Data (PDPL) may apply to our processing of your data. Subject to that law, you may request access to your personal data and information about how it is processed, ask us to correct or erase it, restrict or stop processing, object to processing for direct marketing or profiling, and receive your data in a portable format. Visitors in the DIFC or ADGM free zones may have equivalent rights under those zones' own data protection laws.</p>
-        <p>Send requests to <a href="mailto:support@techstacklab.com">support@techstacklab.com</a>. Where we rely on consent (newsletter, analytics, advertising cookies), you can withdraw it at any time.</p>
+        <p>Send requests to <a href="mailto:gbromano.5bdf@gmail.com">gbromano.5bdf@gmail.com</a>. Where we rely on consent (newsletter, analytics, advertising cookies), you can withdraw it at any time.</p>
 
         <h2 id="retention">9. Data retention</h2>
-        <p>Contact messages are kept for up to 24 months and then deleted. Newsletter data is kept until you unsubscribe. Server logs are kept for up to 90 days. Advertising cookie lifetimes are set by Google and its partners and are described in their policies.</p>
+        <p>Contact messages are kept for up to 24 months and then deleted. Newsletter data is kept until you unsubscribe. Hosting logs are retained by GitHub under its own policies. Advertising cookie lifetimes are set by Google and its partners and are described in their policies.</p>
 
         <h2 id="transfers">10. International transfers</h2>
         <p>Our service providers and advertising partners may process data outside your country, including in the United States. Where required, these transfers rely on appropriate safeguards such as the European Commission's Standard Contractual Clauses or an adequacy decision.</p>
@@ -190,7 +211,7 @@
         <p>We may update this policy as our practices or the law change. We will post the updated version on this page with a new “Last updated” date and, for material changes, show a notice on the Site.</p>
 
         <h2 id="contact">14. Contact</h2>
-        <p>Questions about this policy: <a href="mailto:support@techstacklab.com">support@techstacklab.com</a> or our <a href="/contact.html?topic=privacy">contact form</a>.</p>
+        <p>Questions about this policy: <a href="mailto:gbromano.5bdf@gmail.com">gbromano.5bdf@gmail.com</a> or our <a href="/contact.html?topic=privacy">contact form</a>.</p>
       </div>
     </div>
   </main>
@@ -199,20 +220,20 @@
   <footer class="site-footer">
     <div class="container footer-grid">
       <div>
-        <a class="brand" href="/index.html" aria-label="TechStack Lab home">
+        <a class="brand" href="/" aria-label="TechStack Lab home">
           <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="7" fill="var(--accent)"/><path d="M9 11h14M9 16h10M9 21h6" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
           <span class="brand-name">TechStack <span>Lab</span></span>
         </a>
-        <p>Independent, field-tested guidance on enterprise cloud, security, DevOps, SaaS and AI workflows. Advertising never influences editorial coverage.</p>
+        <p>Independent, source-checked guides on enterprise cloud, security, DevOps, SaaS and AI workflows. Advertising never influences editorial coverage.</p>
       </div>
       <nav aria-label="Categories">
         <h2>Coverage</h2>
         <ul>
-          <li><a href="/index.html?cat=cloud">Cloud architecture</a></li>
-          <li><a href="/index.html?cat=security">Cybersecurity</a></li>
-          <li><a href="/index.html?cat=saas">SaaS tools</a></li>
-          <li><a href="/index.html?cat=devops">DevOps</a></li>
-          <li><a href="/index.html?cat=ai">AI workflows</a></li>
+          <li><a href="/?cat=cloud">Cloud architecture</a></li>
+          <li><a href="/?cat=security">Cybersecurity</a></li>
+          <li><a href="/?cat=saas">SaaS tools</a></li>
+          <li><a href="/?cat=devops">DevOps</a></li>
+          <li><a href="/?cat=ai">AI workflows</a></li>
         </ul>
       </nav>
       <nav aria-label="Company">
@@ -232,6 +253,12 @@
       <button class="link-btn" type="button" data-open-consent>Cookie settings</button>
     </div>
   </footer>
+
+  <!-- AdSense Slot: Sticky Bottom (mobile only · 320x50 · fixed, no CLS) -->
+  <div class="ad-sticky" id="adSticky" hidden>
+    <button class="ad-sticky-close" type="button" aria-label="Close advertisement">×</button>
+    <div class="ad-slot ad-slot--sticky" data-ad-key="sticky" data-ad-format="horizontal"></div>
+  </div>
 
   <!-- ===================== CONSENT BANNER ===================== -->
   <div class="consent" id="consentBanner" role="dialog" aria-modal="false" aria-labelledby="consent-title" hidden>

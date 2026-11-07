@@ -1,0 +1,119 @@
+<!--meta
+{
+  "slug": "kubernetes-cost-allocation-showback",
+  "section": "cloud",
+  "kind": "Guide",
+  "short_title": "Kubernetes cost allocation",
+  "title": "Kubernetes cost allocation: building a showback model finance will trust",
+  "description": "How to split shared Kubernetes cluster costs fairly across teams: requests vs usage, idle capacity, platform overhead, and a worked showback example using the OpenCost allocation rules.",
+  "dek": "A shared cluster produces one bill and many owners. Here is a defensible way to divide it: charge for what teams reserve or use, make idle capacity visible instead of hiding it, and spread shared costs with a rule everyone can check.",
+  "cover_label": "Kubernetes FinOps",
+  "keywords": ["kubernetes", "k8s", "finops", "showback", "chargeback", "opencost", "cost allocation", "idle cost"],
+  "published": "2026-11-07",
+  "start_here": true,
+  "versions": [{"v": "1.0", "date": "2026-11-07", "note": "First published."}],
+  "changelog_summary": "Requests vs usage, idle capacity and shared services: a defensible method for splitting cluster spend across teams, with a worked example.",
+  "takeaways": [
+    "Charge each workload for the larger of what it requested and what it used, the rule used by the OpenCost specification.",
+    "Report idle capacity as its own line before you distribute it; it is the most actionable number in the report.",
+    "Publish the rule for spreading shared costs, and keep it stable so month-to-month changes reflect behaviour, not method.",
+    "Start with showback; move to chargeback only once teams trust the numbers and can act on them.",
+    "Labels are the foundation: without consistent team and service labels, no allocation method works."
+  ],
+  "sources": [
+    {"title": "OpenCost specification: asset, workload, idle and shared costs", "url": "https://opencost.io/docs/specification"},
+    {"title": "Resource management for pods and containers (Kubernetes documentation)", "url": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/"},
+    {"title": "FOCUS: the FinOps Open Cost and Usage Specification (FinOps Foundation)", "url": "https://focus.finops.org/"},
+    {"title": "FinOps Foundation releases FOCUS 1.3, addressing the splitting of shared resource costs (SD Times)", "url": "https://sdtimes.com/finops/finops-foundation-releases-focus-1-3-to-address-issues-related-to-splitting-shared-resource-costs/"}
+  ]
+}
+-->
+<p>A cloud bill tells you what each node, disk and load balancer cost. It does not tell you which team caused that cost, because in a shared Kubernetes cluster dozens of workloads from different teams run on the same nodes. Showback closes that gap: it attributes cluster costs to the teams and services that consumed them, and reports the result back to those teams.</p>
+
+<p>The difficulty is not the arithmetic. It is choosing allocation rules that are fair enough for engineers to accept and stable enough for finance to rely on. This guide walks through those choices, using the open <a href="https://opencost.io/docs/specification" rel="noopener" target="_blank">OpenCost specification</a> as the reference model, and ends with a worked example.</p>
+
+<h2 id="showback-vs-chargeback">Showback first, chargeback later</h2>
+<p>Showback reports costs to teams without moving money. Chargeback actually bills those costs to team budgets. Chargeback creates stronger incentives, but it also turns every allocation rule into a budget dispute.</p>
+<p>Start with showback. Run it for a few months, let teams question the numbers, fix the rules that are genuinely unfair, and only then decide whether chargeback is worth the friction. Many organisations never need it: visibility alone changes behaviour when the reports are trusted and reach the people who can act on them.</p>
+
+<h2 id="requests-vs-usage">Requests versus usage</h2>
+<p>Every container can declare <em>requests</em>, the CPU and memory the scheduler reserves for it, and <em>limits</em>, the ceiling it may not exceed. Actual <em>usage</em> varies over time and can sit well below the request or, where limits allow, above it.</p>
+<p>Charging only for usage looks fair but ignores how the cluster really works: the scheduler reserves requested capacity, so a pod that requests four cores and uses one still prevents anything else from being placed on those cores. Charging only for requests ignores workloads that burst above their requests and consume capacity nobody reserved.</p>
+<p>The OpenCost specification resolves this by charging each workload for the <strong>greater of its request and its usage</strong>, measured over time for CPU, memory and GPUs. It is a sensible default because it charges teams for capacity they lock up and for capacity they actually consume, and it rewards accurate requests.</p>
+
+<div class="callout">
+  <strong>Why max(request, usage) changes behaviour.</strong>
+  Under this rule, over-requesting costs money and under-requesting doesn't save any once usage exceeds the request. The cheapest strategy for a team is to set requests close to real usage, which is also what makes the cluster pack efficiently.
+</div>
+
+<h2 id="idle-and-shared">Idle capacity and shared costs</h2>
+<p>After every workload has been charged, two kinds of cost remain.</p>
+<h3>Idle cost</h3>
+<p>Idle cost is the part of the cluster's capacity that no workload requested or used. OpenCost defines it as the portion of resource allocation costs not allocated to any workload. Idle capacity is partly unavoidable, because clusters need headroom for scaling and failover, and partly waste from oversized node pools or autoscalers that scale down too slowly.</p>
+<p>Report idle cost as its own line before deciding what to do with it. It is often the most actionable number in the whole report: it belongs to the platform team, and it falls when node pools are right-sized.</p>
+<h3>Shared costs</h3>
+<p>Shared costs come from workloads that serve everyone: system namespaces such as <code>kube-system</code>, ingress controllers, monitoring agents, service meshes, and the cluster's control plane fee where your provider charges one. Nobody owns them individually, but they exist because tenants use the cluster.</p>
+<p>The OpenCost specification describes three ways to distribute shared and idle costs among tenants:</p>
+<ul>
+  <li><strong>Evenly,</strong> the same amount per team. Simple, but unfair to small teams.</li>
+  <li><strong>Proportionally,</strong> in line with each team's share of directly allocated costs. The most common choice.</li>
+  <li><strong>By a custom metric,</strong> such as network egress or request volume, when that better reflects who drives the shared cost.</li>
+</ul>
+<p>The method matters less than stability. Pick one, publish it, and keep it for at least a few quarters, so that changes in a team's number reflect changes in behaviour rather than changes in method.</p>
+
+<h2 id="worked-example">A worked example</h2>
+<p>Consider a cluster with 100 vCPUs of capacity, costing an illustrative $70 per vCPU per month, so $7,000 for compute. To keep the arithmetic readable, this example uses CPU only; a real model applies the same steps to memory and GPUs.</p>
+<div class="table-wrap">
+  <table>
+    <caption class="sr-only">Step 1: direct allocation using max(request, usage)</caption>
+    <thead><tr><th scope="col">Tenant</th><th scope="col">Requested vCPU</th><th scope="col">Average usage</th><th scope="col">Charged vCPU</th><th scope="col">Direct cost</th></tr></thead>
+    <tbody>
+      <tr><td>Payments</td><td>30</td><td>18</td><td>30</td><td>$2,100</td></tr>
+      <tr><td>Search</td><td>20</td><td>26</td><td>26</td><td>$1,820</td></tr>
+      <tr><td>Internal tools</td><td>10</td><td>6</td><td>10</td><td>$700</td></tr>
+      <tr><td>Platform (kube-system, ingress, monitoring)</td><td>8</td><td>5</td><td>8</td><td>$560</td></tr>
+      <tr><td>Idle (unallocated)</td><td></td><td></td><td>26</td><td>$1,820</td></tr>
+      <tr><td><strong>Total</strong></td><td></td><td></td><td><strong>100</strong></td><td><strong>$7,000</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+<p>Notice that Search is charged for its usage of 26 vCPUs, not its request of 20, because it consistently bursts above what it reserved. Payments is charged for its request of 30, even though it uses 18.</p>
+<p>Next, distribute the shared costs, platform ($560) plus idle ($1,820), which total $2,380, in proportion to each team's direct cost. The three teams' direct costs add up to $4,620.</p>
+<div class="table-wrap">
+  <table>
+    <caption class="sr-only">Step 2: proportional distribution of shared and idle costs</caption>
+    <thead><tr><th scope="col">Tenant</th><th scope="col">Share of direct cost</th><th scope="col">Shared and idle cost</th><th scope="col">Showback total</th></tr></thead>
+    <tbody>
+      <tr><td>Payments</td><td>45.5%</td><td>$1,082</td><td>$3,182</td></tr>
+      <tr><td>Search</td><td>39.4%</td><td>$938</td><td>$2,758</td></tr>
+      <tr><td>Internal tools</td><td>15.2%</td><td>$361</td><td>$1,061</td></tr>
+    </tbody>
+  </table>
+</div>
+<p>The totals add back to $7,000 (figures are rounded to the nearest dollar). The report that goes to each team should show both steps: their direct cost, which they control through their requests, and their share of shared and idle cost, which the platform team controls through right-sizing.</p>
+<p>The example also shows where the savings are. Payments could cut its direct cost by more than a third by lowering its request towards its usage. Search should raise its request to match real usage, which costs nothing extra under this rule and makes scheduling more predictable. And the platform team could reduce the 26 idle vCPUs by tuning the node pool.</p>
+
+<h2 id="labels">Labels: the foundation everything depends on</h2>
+<p>Allocation only works if every workload can be traced to an owner. Agree a small, mandatory label set before you build any report:</p>
+<ul>
+  <li><code>team</code>: the team accountable for the cost.</li>
+  <li><code>service</code> or <code>app</code>: the service the workload belongs to.</li>
+  <li><code>environment</code>: production, staging or development, so non-production spend is visible.</li>
+</ul>
+<p>Enforce the labels at admission time with a policy engine, rather than asking teams to remember. Workloads without labels should be rejected in production clusters, or at minimum reported in a clearly named "unallocated" line that someone is accountable for reducing.</p>
+<p>Namespaces are a useful fallback when a namespace maps cleanly to one team, but they break down when several teams share a namespace or one team spreads across many.</p>
+
+<h2 id="tooling">Tooling and data</h2>
+<p>You don't need to build the calculation yourself. OpenCost, a CNCF project, implements the specification and runs inside the cluster, combining Kubernetes resource data with cloud pricing. Commercial tools build on similar models and add features such as budgets, alerts and multi-cluster views.</p>
+<p>Whatever you use, reconcile the totals against your actual cloud invoice every month. Allocation tools estimate costs from list or negotiated prices, while the invoice reflects discounts, credits and commitments. A model that drifts far from the invoice loses finance's trust quickly.</p>
+<p>The FinOps Foundation's <a href="https://focus.finops.org/" rel="noopener" target="_blank">FOCUS specification</a> standardises billing data across providers, and its recent versions add support for splitting shared resource costs. Where your providers export FOCUS data, joining invoice data with cluster allocation becomes much simpler.</p>
+
+<h2 id="rollout">A rollout plan</h2>
+<ol>
+  <li><strong>Agree and enforce labels</strong> for team, service and environment.</li>
+  <li><strong>Deploy an allocation tool</strong> and reconcile its totals against one month's invoice.</li>
+  <li><strong>Publish the method</strong>: max(request, usage), how idle and shared costs are distributed, and what is excluded.</li>
+  <li><strong>Send a first showback report</strong> to team leads, with direct and shared costs separated, and invite challenges for a month.</li>
+  <li><strong>Fix genuine unfairness</strong>, then freeze the method for at least two quarters.</li>
+  <li><strong>Act on the findings:</strong> right-size requests, tune node pools, and track idle cost as a platform metric.</li>
+</ol>
