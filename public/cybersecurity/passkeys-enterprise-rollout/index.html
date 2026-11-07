@@ -21,7 +21,11 @@
   <meta property="article:modified_time" content="2026-11-07T08:00:00+04:00">
   <meta property="article:section" content="Cybersecurity">
   <link rel="preload" href="/fonts/source-serif-4-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='28' height='28' rx='7' fill='%232456e8'/%3E%3Cpath d='M9 11h14M9 16h10M9 21h6' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#0f766e">
 
   <!-- Theme set before paint (prevents flash) -->
   <script>(function(){try{var t=localStorage.getItem('tsl-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
@@ -205,11 +209,6 @@
 <p>Most account takeovers in the workforce still start the same way: a convincing page collects a password and a one-time code, and an attacker replays them within seconds. Push notifications and SMS codes slowed this down, but they don't stop it, because a person can be tricked into approving or relaying them.</p>
 
 <p>Passkeys change the mechanics. This guide covers what makes them different, the policy decisions a rollout depends on, and the operational details — recovery, help desk and retiring old methods — where rollouts usually stall.</p>
-            <!-- AdSense Slot: Header (in-article after intro · reserved 100px mobile / 90px desktop) -->
-            <div class="ad-wrap">
-              <span class="ad-label">Advertisement</span>
-              <div class="ad-slot ad-slot--leaderboard" data-ad-key="header" data-ad-format="horizontal"></div>
-            </div>
 
 
 <h2 id="why-passkeys">Why passkeys resist phishing</h2>
@@ -263,11 +262,6 @@
 <p>Two details matter. First, attestation is checked when a passkey is registered, so turning enforcement on later doesn't retroactively block passkeys that were registered without it. Decide before you enrol administrators. Second, without attestation, an allow-list of authenticator models is a guide rather than a hard control, because the service can't verify the model it's told.</p>
 
 
-            <!-- AdSense Slot: Mid-Content #1 (in-article · reserved 280px) -->
-            <div class="ad-wrap">
-              <span class="ad-label">Advertisement</span>
-              <div class="ad-slot ad-slot--inarticle" data-ad-key="midContent1" data-ad-format="fluid-inarticle"></div>
-            </div>
 <h2 id="recovery">Design recovery first</h2>
 <p>Once sign-in is phishing-resistant, attackers move to the weakest remaining path: account recovery. If anyone can call the help desk, answer two questions and have a new passkey registered, the passkey rollout has moved the risk rather than removed it.</p>
 <ul>
@@ -396,11 +390,6 @@
               <nav class="toc" aria-label="Table of contents" data-toc></nav>
             </section>
 
-            <!-- AdSense Slot: Sidebar (desktop only · 300x600 · reserved 600px) -->
-            <div class="ad-wrap ad-desktop-only">
-              <span class="ad-label">Advertisement</span>
-              <div class="ad-slot ad-slot--sidebar" data-ad-key="sidebar" data-ad-format="vertical"></div>
-            </div>
           </div>
         </aside>
       </div>
@@ -445,11 +434,6 @@
     </div>
   </footer>
 
-  <!-- AdSense Slot: Sticky Bottom (mobile only · 320x50 · fixed, no CLS) -->
-  <div class="ad-sticky" id="adSticky" hidden>
-    <button class="ad-sticky-close" type="button" aria-label="Close advertisement">×</button>
-    <div class="ad-slot ad-slot--sticky" data-ad-key="sticky" data-ad-format="horizontal"></div>
-  </div>
 
   <!-- ===================== CONSENT BANNER ===================== -->
   <div class="consent" id="consentBanner" role="dialog" aria-modal="false" aria-labelledby="consent-title" hidden>

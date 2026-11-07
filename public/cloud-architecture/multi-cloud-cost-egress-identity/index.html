@@ -21,7 +21,11 @@
   <meta property="article:modified_time" content="2026-11-07T08:00:00+04:00">
   <meta property="article:section" content="Cloud architecture">
   <link rel="preload" href="/fonts/source-serif-4-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='28' height='28' rx='7' fill='%232456e8'/%3E%3Cpath d='M9 11h14M9 16h10M9 21h6' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#0f766e">
 
   <!-- Theme set before paint (prevents flash) -->
   <script>(function(){try{var t=localStorage.getItem('tsl-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
@@ -205,11 +209,6 @@
 <p>"Multi-cloud" covers two very different situations. In one, a company runs most workloads in a single cloud and uses a second for a specific reason: a data platform it prefers, a customer contract, or an acquisition that arrived with its own estate. In the other, a company deliberately spreads similar workloads across two or three providers to avoid depending on any one of them.</p>
 
 <p>The first is common and usually sensible. The second is where costs tend to surprise people, because the expensive parts are not on any single provider's invoice. This guide sets out a cost model you can fill in with your own numbers before you commit, and the questions that decide whether multi-cloud is worth it.</p>
-            <!-- AdSense Slot: Header (in-article after intro · reserved 100px mobile / 90px desktop) -->
-            <div class="ad-wrap">
-              <span class="ad-label">Advertisement</span>
-              <div class="ad-slot ad-slot--leaderboard" data-ad-key="header" data-ad-format="horizontal"></div>
-            </div>
 
 
 <h2 id="where-the-money-goes">Where the money actually goes</h2>
@@ -290,11 +289,6 @@
 <p>For the last row, the FinOps Foundation's <a href="https://focus.finops.org/" rel="noopener" target="_blank">FOCUS specification</a> defines a common format for cloud billing data. Where your providers export it, building one cost report across clouds becomes much less work.</p>
 
 
-            <!-- AdSense Slot: Mid-Content #1 (in-article · reserved 280px) -->
-            <div class="ad-wrap">
-              <span class="ad-label">Advertisement</span>
-              <div class="ad-slot ad-slot--inarticle" data-ad-key="midContent1" data-ad-format="fluid-inarticle"></div>
-            </div>
 <h2 id="discounts">Fragmented discounts and lost leverage</h2>
 <p>Every large provider rewards commitment: savings plans and reserved capacity at AWS, reservations and savings plans at Azure, committed use discounts at Google Cloud, plus negotiated enterprise agreements on top. These discounts are usually the single largest lever on a cloud bill.</p>
 <p>Splitting a fixed amount of spend between providers has two effects. Each commitment is smaller, so you may land in a lower discount tier or be unable to commit at all for spiky workloads. And your position in contract negotiations weakens, because each provider sees a smaller account.</p>
@@ -429,11 +423,6 @@
               <nav class="toc" aria-label="Table of contents" data-toc></nav>
             </section>
 
-            <!-- AdSense Slot: Sidebar (desktop only · 300x600 · reserved 600px) -->
-            <div class="ad-wrap ad-desktop-only">
-              <span class="ad-label">Advertisement</span>
-              <div class="ad-slot ad-slot--sidebar" data-ad-key="sidebar" data-ad-format="vertical"></div>
-            </div>
           </div>
         </aside>
       </div>
@@ -478,11 +467,6 @@
     </div>
   </footer>
 
-  <!-- AdSense Slot: Sticky Bottom (mobile only · 320x50 · fixed, no CLS) -->
-  <div class="ad-sticky" id="adSticky" hidden>
-    <button class="ad-sticky-close" type="button" aria-label="Close advertisement">×</button>
-    <div class="ad-slot ad-slot--sticky" data-ad-key="sticky" data-ad-format="horizontal"></div>
-  </div>
 
   <!-- ===================== CONSENT BANNER ===================== -->
   <div class="consent" id="consentBanner" role="dialog" aria-modal="false" aria-labelledby="consent-title" hidden>

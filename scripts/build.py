@@ -89,6 +89,38 @@ def ad_slot(key, kind, fmt, comment):
             f'            </div>\n')
 
 
+def configured_slots():
+    """Ad unit IDs from public/adsense-config.js (CONFIG.slots). Empty string = no unit yet."""
+    js = (PUBLIC / "adsense-config.js").read_text(encoding="utf-8")
+    block = re.search(r"slots:\s*\{(.*?)\}", js, re.S).group(1)
+    return dict(re.findall(r"(\w+):\s*'([^']*)'", block))
+
+
+SLOTS = configured_slots()
+
+
+def strip_unconfigured_ads(page):
+    """Remove ad boxes whose unit ID is not set yet, so visitors and AdSense reviewers
+    never see empty 'Advertisement' placeholders. Add the 10-digit ID in adsense-config.js
+    and rebuild to bring a slot back. (Auto ads, if enabled in AdSense, need no slots.)"""
+    for key, unit in SLOTS.items():
+        if re.fullmatch(r"\d{10}", unit):
+            continue
+        page = re.sub(
+            r'(?:[ \t]*<!-- AdSense Slot:[^\n]*-->\n)?[ \t]*<div class="ad-wrap[^"]*">\s*'
+            r'<span class="ad-label">Advertisement</span>\s*'
+            rf'<div class="ad-slot[^"]*" data-ad-key="{key}"[^>]*></div>\s*</div>\n?', "", page)
+        if key == "sticky":
+            page = re.sub(r'(?:[ \t]*<!-- AdSense Slot:[^\n]*-->\n)?[ \t]*<div class="ad-sticky" id="adSticky" hidden>.*?'
+                          r'data-ad-key="sticky"[^>]*></div>\s*</div>\n?', "", page, flags=re.S)
+    page = re.sub(r'(?:[ \t]*<!-- AdSense Slot:[^\n]*-->\n)?[ \t]*<div class="sidebar-sticky ad-desktop-only">\s*</div>\n?', "", page)
+    return page
+
+
+def write_html(dest, out):
+    dest.write_text(strip_unconfigured_ads(out), encoding="utf-8")
+
+
 def head(title, description, canonical, og_type="website", image=None, extra="", jsonld=None, robots="index, follow, max-image-preview:large"):
     image = image or f"{SITE}/assets/og-default.png"
     ld = ""
@@ -371,7 +403,7 @@ def article_page(a, arts):
     out += tail()
     dest = PUBLIC / a["path"].strip("/") / "index.html"
     dest.parent.mkdir(parents=True, exist_ok=True)
-    dest.write_text(out, encoding="utf-8")
+    write_html(dest, out)
     return dest
 
 
@@ -443,7 +475,7 @@ def homepage(arts):
                "Source-checked guides on enterprise cloud architecture, cybersecurity, DevOps, B2B SaaS and AI workflows, with a dated changelog for every revision.",
                f"{SITE}/", jsonld=ld)
     out += partial("header.html") + tpl + tail()
-    (PUBLIC / "index.html").write_text(out, encoding="utf-8")
+    write_html(PUBLIC / "index.html", out)
 
 
 # ---------------------------------------------------------------- static pages
@@ -462,7 +494,7 @@ def static_pages():
         out += partial("header.html")
         out += f'  <main id="main" class="page">\n    <div class="container">\n{main}\n    </div>\n  </main>\n\n'
         out += tail()
-        (PUBLIC / name).write_text(out, encoding="utf-8")
+        write_html(PUBLIC / name, out)
         built.append(name)
     return built
 
