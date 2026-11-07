@@ -281,8 +281,12 @@
 
     $$('[data-open-consent]').forEach(function (b) {
       b.addEventListener('click', function () {
-        if (window.TSLAds.config.useGoogleCMP && window.googlefc && window.googlefc.showRevocationMessage) {
-          window.googlefc.showRevocationMessage(); return;
+        if (window.TSLAds.config.useGoogleCMP) {
+          // Reopen Google's consent message; queue the call if Google's script hasn't loaded yet
+          window.googlefc = window.googlefc || {};
+          window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
+          window.googlefc.callbackQueue.push({ 'CONSENT_API_READY': function () { window.googlefc.showRevocationMessage(); } });
+          return;
         }
         open(); prefs.hidden = false; customizeBtn.textContent = 'Save choices';
       });

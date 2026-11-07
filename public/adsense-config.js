@@ -35,9 +35,14 @@
     /* Set to true if you use Google's own certified CMP (AdSense → Privacy & messaging).
        Google requires a certified CMP to serve ads to users in the EEA, UK and Switzerland.
        When true, the custom banner stays hidden and Google's message handles consent. */
-    useGoogleCMP: false,
+    useGoogleCMP: true,                          // ON: "TechStack Lab consent" (EEA/UK/CH) and "TechStack Lab US opt-out" are published
     debug: false
   };
+
+  // Regions where consent is required before ad storage (EEA + UK + Switzerland).
+  // Used for region-scoped Consent Mode defaults when Google's CMP is in charge.
+  var CONSENT_REGIONS = ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU',
+    'MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH'];
 
   var log = function () { if (CONFIG.debug && window.console) console.log.apply(console, ['[TSLAds]'].concat([].slice.call(arguments))); };
 
@@ -52,7 +57,7 @@
   function gtag() { window.dataLayer.push(arguments); }
   window.gtag = window.gtag || gtag;
 
-  gtag('consent', 'default', {
+  var DENIED = {
     ad_storage: 'denied',
     ad_user_data: 'denied',
     ad_personalization: 'denied',
@@ -60,8 +65,21 @@
     functionality_storage: 'granted',
     security_storage: 'granted',
     wait_for_update: 500
-  });
-  gtag('set', 'ads_data_redaction', true);
+  };
+  if (CONFIG.useGoogleCMP) {
+    // Google's CMP collects consent in the EEA/UK/CH and handles US-state opt-outs.
+    // Deny by default only where consent is required; elsewhere ads run normally,
+    // and the US opt-out message lets visitors in those states opt out.
+    gtag('consent', 'default', Object.assign({ region: CONSENT_REGIONS }, DENIED));
+    gtag('consent', 'default', {
+      ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted',
+      analytics_storage: 'granted', functionality_storage: 'granted', security_storage: 'granted'
+    });
+  } else {
+    // Custom banner mode: deny everywhere until the visitor chooses.
+    gtag('consent', 'default', DENIED);
+    gtag('set', 'ads_data_redaction', true);
+  }
 
   /* ---------- 3. Consent state ---------- */
   function readConsent() {
@@ -100,8 +118,19 @@
     log('consent applied', c, 'GPC:', GPC);
   }
 
-  var consent = readConsent();
-  if (consent) applyConsent(consent);
+  var consent = null;
+  if (CONFIG.useGoogleCMP) {
+    // Google's CMP owns consent; a choice saved by the old custom banner is ignored.
+    if (GPC) {
+      // Honour Global Privacy Control as an opt-out of ad personalisation (as the Privacy Policy states)
+      gtag('consent', 'update', { ad_personalization: 'denied' });
+      window.adsbygoogle = window.adsbygoogle || [];
+      window.adsbygoogle.requestNonPersonalizedAds = 1;
+    }
+  } else {
+    consent = readConsent();
+    if (consent) applyConsent(consent);
+  }
 
   /* ---------- 4. Library loader (once) ---------- */
   var libState = 'idle'; // idle | loading | ready | failed
