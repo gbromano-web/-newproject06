@@ -159,7 +159,7 @@ ORG = {
     "@id": f"{SITE}/#organization",
     "name": SITE_NAME,
     "url": f"{SITE}/",
-    "logo": {"@type": "ImageObject", "url": f"{SITE}/assets/logo-600x60.png", "width": 600, "height": 60},
+    "logo": {"@type": "ImageObject", "url": f"{SITE}/assets/icon-512.png", "width": 512, "height": 512},
     "email": EMAIL,
     "publishingPrinciples": f"{SITE}/about.html#editorial",
     "correctionsPolicy": f"{SITE}/about.html#corrections",
